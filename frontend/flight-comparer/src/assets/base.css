@@ -1,0 +1,58 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --white: #ffffff;
+  --white-less: #fafafa;
+  --white-least: #f0f0f0;
+
+  --black: #171719;
+  --black-less: #3a3a3f;
+  --black-least: #5a5a65;
+
+  --blue-grey: #2a3f52;
+  --blue-grey-light: #51799e;
+
+  --color-accent-blue: #435982;
+  --color-accent-red: #ff8282;
+  --color-link: #8e556a;
+
+  --text-light-color: var(--blue-grey);
+  --text-light-black: var(--black);
+  --text-dark-color: var(--blue-grey-light);
+  --text-dark-white: var(--white-less);
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-background: var(--white);
+  --color-background-less: var(--white-less);
+  --color-background-least: var(--white-least);
+
+  --color-heading: var(--text-light-color);
+  --color-text: var(--text-light-black);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--black);
+    --color-background-less: var(--black-less);
+    --color-background-least: var(--black-least);
+
+    --color-heading: var(--text-dark-color);
+    --color-text: var(--text-dark-white);
+  }
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--color-text);
+  background: var(--color-background-less);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
