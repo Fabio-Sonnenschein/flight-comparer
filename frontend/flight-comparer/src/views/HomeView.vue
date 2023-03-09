@@ -4,36 +4,45 @@
       <div id="map"></div>
     </div>
     <div class="detail-container">
-      <div id="no-selection" v-if="this.selection === 'none'">
-        <h1>Nothing selected</h1>
-        <p>Try clicking something on the map to see more details</p>
-      </div>
-      <div id="airport-selected" v-if="this.selection === 'airport'">
-        <h1>{{ airportCode }}</h1>
-        <h2>{{ airportName }}</h2>
-        <p>{{ airportCity }}, {{ airportCountry }} {{ this.getFlagEmoji() }}</p>
-      </div>
-      <div id="flight-selected" v-if="this.selection === 'flight'">
-
-      </div>
+      <MapSelection_Airport
+          :airportData="this.airportData"
+          v-if="showAirportDetails" />
     </div>
   </div>
 </template>
 
 <script>
+import {defineAsyncComponent, ref} from 'vue';
+import ErrorComponent from '@/components/Error.vue';
+
+const MapSelection_Airport = defineAsyncComponent({
+  loader: () => import("@/components/MapSelection_Airport.vue"),
+  errorComponent: ErrorComponent,
+  onError(error, retry, fail, attempts) {
+    console.warn(attempts);
+    console.error(error);
+    fail();
+  }
+});
+
 let map;
 
 export default {
+  components: {
+    MapSelection_Airport
+  },
   data: function() {
     return {
       airports: new Map(),
       airportMarkers: [],
-      selection: "none",
-      airportCode: "",
-      airportName: "",
-      airportCity: "",
-      airportCountry: "",
-      airportCountryA2: ""
+      showAirportDetails: ref(false),
+      airportData: {
+        airportCode: "",
+        airportName: "",
+        airportCity: "",
+        airportCountry: "",
+        airportCountryA2: ""
+      }
     }
   },
   methods: {
@@ -42,7 +51,7 @@ export default {
     },
 
     getFlagEmoji() {
-      let charArray = this.airportCountryA2.toUpperCase().split('').map((char) => 127397 + char.charCodeAt(0));
+      let charArray = this.airportData.airportCountryA2.toUpperCase().split('').map((char) => 127397 + char.charCodeAt(0));
       return String.fromCodePoint(...charArray);
     },
 
@@ -70,15 +79,15 @@ export default {
     },
 
     airportSelected(airportId) {
-      this.selection = "airport";
-      this.airportCode = this.getAirportsMap().get(airportId).code;
-      this.airportName = this.getAirportsMap().get(airportId).name;
-      this.airportCity = this.getAirportsMap().get(airportId).location.city;
-      this.airportCountry = this.getAirportsMap().get(airportId).location.country;
-      this.airportCountryA2 = this.getAirportsMap().get(airportId).location.countryA2;
+      this.showAirportDetails = ref(true);
+      this.airportData.airportCode = this.getAirportsMap().get(airportId).code;
+      this.airportData.airportName = this.getAirportsMap().get(airportId).name;
+      this.airportData.airportCity = this.getAirportsMap().get(airportId).location.city;
+      this.airportData.airportCountry = this.getAirportsMap().get(airportId).location.country;
+      this.airportData.airportCountryA2 = this.getAirportsMap().get(airportId).location.countryA2;
     }
   },
-  mounted: function() {
+  mounted() {
     map = L.map('map').setView([23.725011735951796, 13.0078125], 2);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 15,
@@ -86,6 +95,8 @@ export default {
     }).addTo(map);
 
     this.apiGETAirports();
+  },
+  setup() {
   }
 }
 </script>
@@ -101,7 +112,7 @@ export default {
   margin: 2rem 0;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 0 10px -7px var(--black-least);
+  box-shadow: 0 0 10px -7px var(--color-background-least);
 }
 
 #map {
@@ -114,7 +125,10 @@ export default {
   border-radius: 16px;
   padding: 16px;
   overflow: hidden;
-  box-shadow: 0 0 10px 0 var(--white-least);
+  box-shadow: 0 0 10px 0 var(--color-background-least);
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

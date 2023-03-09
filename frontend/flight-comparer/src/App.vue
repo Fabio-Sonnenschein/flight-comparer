@@ -26,7 +26,7 @@ import { RouterLink, RouterView } from 'vue-router'
   padding: 16px;
   text-align: left;
   font-size: 1rem;
-  box-shadow: 0 0 10px 0 var(--white-least);
+  box-shadow: 0 0 10px 0 var(--color-background-least);
   display: flex;
   justify-content: center;
 }

@@ -3,10 +3,14 @@
   --white: #ffffff;
   --white-less: #fafafa;
   --white-least: #f0f0f0;
+  --white-df: #ffffffdf;
+  --white-00: #ffffff00;
 
   --black: #171719;
   --black-less: #3a3a3f;
   --black-least: #5a5a65;
+  --black-df: #000000df;
+  --black-00: #00000000;
 
   --blue-grey: #2a3f52;
   --blue-grey-light: #51799e;
@@ -26,6 +30,8 @@
   --color-background: var(--white);
   --color-background-less: var(--white-less);
   --color-background-least: var(--white-least);
+  --color-background-gradient-df: var(--white-df);
+  --color-background-gradient-00: var(--white-00);
 
   --color-heading: var(--text-light-color);
   --color-text: var(--text-light-black);
@@ -36,6 +42,8 @@
     --color-background: var(--black);
     --color-background-less: var(--black-less);
     --color-background-least: var(--black-least);
+    --color-background-gradient-df: var(--black-df);
+    --color-background-gradient-00: var(--black-00);
 
     --color-heading: var(--text-dark-color);
     --color-text: var(--text-dark-white);

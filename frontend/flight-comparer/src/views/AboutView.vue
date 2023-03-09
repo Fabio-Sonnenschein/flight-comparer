@@ -34,14 +34,14 @@
   background-position: bottom left;
   background-clip: text;
   background-size: cover;
-  box-shadow: 0 0 10px 0 var(--white-least);
+  box-shadow: 0 0 10px 0 var(--color-background-least);
 }
 
 .about-container {
   height: calc(100vh - 4rem - 32px);
   width: 100%;
   padding: 16px;
-  background: linear-gradient(90deg, #ffffffdf 10%, #ffffff00 70%);
+  background: linear-gradient(90deg, var(--color-background-gradient-df) 10%, var(--color-background-gradient-00) 70%);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
