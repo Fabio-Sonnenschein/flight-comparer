@@ -638,7 +638,7 @@ let airports = [
     name: 'Heathrow Airport',
     location: {
       city: 'London',
-      country: 'United Kingdom of Great Britain and Northern Ireland (the)',
+      country: 'United Kingdom',
       countryA2: 'GB'
     },
     position: {
@@ -664,12 +664,25 @@ let airports = [
     name: 'Dubai International Airport',
     location: {
       city: 'Dubai',
-      country: 'United Arab Emirates (the)',
+      country: 'United Arab Emirates',
       countryA2: 'AE'
     },
     position: {
       latitude: 25.25047950172038,
       longitude: 55.37109375000001
+    }
+  },
+  {
+    code: 'AUH',
+    name: 'Abu Dhabi International Airport',
+    location: {
+      city: 'Abu Dhabi',
+      country: 'United Arab Emirates',
+      countryA2: 'AE'
+    },
+    position: {
+      latitude: 24.433056,
+      longitude: 54.651111
     }
   },
   {
@@ -712,6 +725,45 @@ let airports = [
     }
   },
   {
+    code: 'CBR',
+    name: 'Canberra Airport',
+    location: {
+      city: 'Canberra',
+      country: 'Australia',
+      countryA2: 'AU'
+    },
+    position: {
+      latitude: -35.306944,
+      longitude: 149.195
+    }
+  },
+  {
+    code: 'MEL',
+    name: 'Melbourne Airport',
+    location: {
+      city: 'Melbourne',
+      country: 'Australia',
+      countryA2: 'AU'
+    },
+    position: {
+      latitude: -37.673333,
+      longitude: 144.843333
+    }
+  },
+  {
+    code: 'PER',
+    name: 'Perth Airport',
+    location: {
+      city: 'Perth',
+      country: 'Australia',
+      countryA2: 'AU'
+    },
+    position: {
+      latitude: -31.9403,
+      longitude: 115.9669
+    }
+  },
+  {
     code: 'AKL',
     name: 'Auckland Airport',
     location: {
@@ -738,6 +790,32 @@ let airports = [
     }
   },
   {
+    code: 'CTS',
+    name: 'New Chitose Airport',
+    location: {
+      city: 'Chitose',
+      country: 'Japan',
+      countryA2: 'JP'
+    },
+    position: {
+      latitude: 42.775278,
+      longitude: 141.6925
+    }
+  },
+  {
+    code: 'NRT',
+    name: 'Narita International Airport',
+    location: {
+      city: 'Tokyo (Narita)',
+      country: 'Japan',
+      countryA2: 'JP'
+    },
+    position: {
+      latitude: 35.765278,
+      longitude: 140.385556
+    }
+  },
+  {
     code: 'YVR',
     name: 'Vancouver International Airport',
     location: {
@@ -761,6 +839,19 @@ let airports = [
     position: {
       latitude: 51.1303602931277,
       longitude: -115.99201917648318
+    }
+  },
+  {
+    code: 'YEG',
+    name: 'YEG Edmonton International Airport',
+    location: {
+      city: 'Edmonton',
+      country: 'Canada',
+      countryA2: 'CA'
+    },
+    position: {
+      latitude: 53.31,
+      longitude: -113.579444
     }
   },
   {
@@ -794,7 +885,7 @@ let airports = [
     name: 'Daniel K. Inouye International Airport',
     location: {
       city: 'Honolulu',
-      country: 'United States of America (the)',
+      country: 'United States of America',
       countryA2: 'US'
     },
     position: {
@@ -807,7 +898,7 @@ let airports = [
     name: 'Seattle-Tacoma International Airport',
     location: {
       city: 'Seattle',
-      country: 'United States of America (the)',
+      country: 'United States of America',
       countryA2: 'US'
     },
     position: {
@@ -820,7 +911,7 @@ let airports = [
     name: 'San Francisco International Airport',
     location: {
       city: 'San Francisco',
-      country: 'United States of America (the)',
+      country: 'United States of America',
       countryA2: 'US'
     },
     position: {
@@ -833,7 +924,7 @@ let airports = [
     name: 'Los Angeles International Airport',
     location: {
       city: 'Los Angeles',
-      country: 'United States of America (the)',
+      country: 'United States of America',
       countryA2: 'US'
     },
     position: {
@@ -846,12 +937,25 @@ let airports = [
     name: 'John F. Kennedy International Airport',
     location: {
       city: 'New York',
-      country: 'United States of America (the)',
+      country: 'United States of America',
       countryA2: 'US'
     },
     position: {
       latitude: 40.64551266584854,
       longitude: -74.21513366699224
+    }
+  },
+  {
+    code: 'MIA',
+    name: 'Miami International Airport',
+    location: {
+      city: 'Miami',
+      country: 'United States of America',
+      countryA2: 'US'
+    },
+    position: {
+      latitude: 25.793333,
+      longitude: -80.290556
     }
   },
   {
@@ -868,16 +972,289 @@ let airports = [
     }
   },
   {
-    code: 'AEP',
-    name: 'Aeroparque Jorge Newbery',
+    code: 'EZE',
+    name: 'Ministro Pistarini International Airport',
     location: {
       city: 'Buenos Aires',
       country: 'Argentina',
       countryA2: 'AR'
     },
     position: {
-      latitude: -34.558889,
-      longitude: -58.416389
+      latitude: -34.82222,
+      longitude: -58.53583
+    }
+  },
+  {
+    code: 'TLL',
+    name: 'Tallinn Airport',
+    location: {
+      city: 'Tallinn',
+      country: 'Estonia',
+      countryA2: 'EE'
+    },
+    position: {
+      latitude: 59.41333,
+      longitude: 24.8325
+    }
+  },
+  {
+    code: 'HEL',
+    name: 'Helsinki-Vantaa Airport',
+    location: {
+      city: 'Helsinki (Vantaa)',
+      country: 'Finland',
+      countryA2: 'FI'
+    },
+    position: {
+      latitude: 60.31722,
+      longitude: 24.96333
+    }
+  },
+  {
+    code: 'OSL',
+    name: 'Oslo Airport',
+    location: {
+      city: 'Oslo',
+      country: 'Norway',
+      countryA2: 'NO'
+    },
+    position: {
+      latitude: 60.202778,
+      longitude: 11.083889
+    }
+  },
+  {
+    code: 'ARN',
+    name: 'Stockholm Arlanda Airport',
+    location: {
+      city: 'Stockholm',
+      country: 'Sweden',
+      countryA2: 'SE'
+    },
+    position: {
+      latitude: 59.651944,
+      longitude: 17.918611
+    }
+  },
+  {
+    code: 'CPH',
+    name: 'Copenhagen Airport, Kastrup',
+    location: {
+      city: 'Copenhagen (Kastrup)',
+      country: 'Denmark',
+      countryA2: 'DK'
+    },
+    position: {
+      latitude: 55.618056,
+      longitude: 12.656111
+    }
+  },
+  {
+    code: 'KEF',
+    name: 'Keflavik Airport',
+    location: {
+      city: 'Reykjavik',
+      country: 'Iceland',
+      countryA2: 'IS'
+    },
+    position: {
+      latitude: 63.985,
+      longitude: -22.605556
+    }
+  },
+  {
+    code: 'DUB',
+    name: 'Dublin Airport',
+    location: {
+      city: 'Dublin (Collinstown)',
+      country: 'Ireland',
+      countryA2: 'IE'
+    },
+    position: {
+      latitude: 53.421389,
+      longitude: -6.27
+    }
+  },
+  {
+    code: 'VIE',
+    name: 'Vienna International Airport',
+    location: {
+      city: 'Vienna',
+      country: 'Austria',
+      countryA2: 'AT'
+    },
+    position: {
+      latitude: 48.110833,
+      longitude: 16.570833
+    }
+  },
+  {
+    code: 'ZRH',
+    name: 'Zurich Airport',
+    location: {
+      city: 'Zurich',
+      country: 'Switzerland',
+      countryA2: 'CH'
+    },
+    position: {
+      latitude: 47.464722,
+      longitude: 8.549167
+    }
+  },
+  {
+    code: 'ICN',
+    name: 'Incheon International Airport',
+    location: {
+      city: 'Seoul (Incheon)',
+      country: 'South Korea (Republic of Korea)',
+      countryA2: 'KR'
+    },
+    position: {
+      latitude: 37.463333,
+      longitude: 126.44
+    }
+  },
+  {
+    code: 'PUS',
+    name: 'Gimhae International Airport',
+    location: {
+      city: 'Busan',
+      country: 'South Korea (Republic of Korea)',
+      countryA2: 'KR'
+    },
+    position: {
+      latitude: 35.179444,
+      longitude: 128.938333
+    }
+  },
+  {
+    code: 'FCO',
+    name: 'Rome-Fiumicino International Airport "Leonardo da Vinci"',
+    location: {
+      city: 'Rome (Fiumicino)',
+      country: 'Italy',
+      countryA2: 'IT'
+    },
+    position: {
+      latitude: 41.800278,
+      longitude: 12.238889
+    }
+  },
+  {
+    code: 'PRG',
+    name: 'Václav Havel Airport Prague',
+    location: {
+      city: 'Prague',
+      country: 'Czech Republic',
+      countryA2: 'CZ'
+    },
+    position: {
+      latitude: 50.1018,
+      longitude: 14.2632
+    }
+  },
+  {
+    code: 'WAW',
+    name: 'Warsaw Chopin Airport',
+    location: {
+      city: 'Warsaw',
+      country: 'Poland',
+      countryA2: 'PL'
+    },
+    position: {
+      latitude: 52.165833,
+      longitude: 20.967222
+    }
+  },
+  {
+    code: 'IST',
+    name: 'Istanbul Airport',
+    location: {
+      city: 'Istanbul',
+      country: 'Turkey',
+      countryA2: 'TR'
+    },
+    position: {
+      latitude: 41.262222,
+      longitude: 28.727778
+    }
+  },
+  {
+    code: 'TPE',
+    name: 'Taoyuan International Airport',
+    location: {
+      city: 'Taipei (Taoyuan)',
+      country: 'Taiwan',
+      countryA2: 'TW'
+    },
+    position: {
+      latitude: 25.076389,
+      longitude: 121.223889
+    }
+  },
+  {
+    code: 'HKG',
+    name: 'Hong Kong International Airport',
+    location: {
+      city: 'Hong Kong',
+      country: 'Hong Kong',
+      countryA2: 'HK'
+    },
+    position: {
+      latitude: 22.308919,
+      longitude: 113.914603
+    }
+  },
+  {
+    code: 'GRU',
+    name: 'São Paulo/Guarulhos - Govenor André Franco Montoro International Airport',
+    location: {
+      city: 'São Paulo (Guarulhos)',
+      country: 'Brazil',
+      countryA2: 'BR'
+    },
+    position: {
+      latitude: -23.435556,
+      longitude: -46.473056
+    }
+  },
+  {
+    code: 'BSB',
+    name: 'Brasília-President Juscelino Kubitschek International Airport',
+    location: {
+      city: 'Brasília',
+      country: 'Brazil',
+      countryA2: 'BR'
+    },
+    position: {
+      latitude: -15.869167,
+      longitude: -47.920833
+    }
+  },
+  {
+    code: 'LIM',
+    name: 'Jorge Chávez International Airport',
+    location: {
+      city: 'Lima (Callao)',
+      country: 'Peru',
+      countryA2: 'PE'
+    },
+    position: {
+      latitude: -12.021944,
+      longitude: -77.114444
+    }
+  },
+  {
+    code: 'CPT',
+    name: 'Cape Town International Airport Isikhululo Seenqwelomoya',
+    location: {
+      city: 'Cape Town (Matroosfontein)',
+      country: 'South Africa',
+      countryA2: 'ZA'
+    },
+    position: {
+      latitude: -33.969444,
+      longitude: 18.597222
     }
   }
 ];
