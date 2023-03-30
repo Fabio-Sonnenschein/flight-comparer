@@ -1,12 +1,46 @@
 <template>
-  <div class="home-container">
-    <div class="map-container">
-      <div id="map"></div>
+  <div class="view-root">
+    <div class="action-pane">
+      <div class="action-container">
+        <div class="search-container">
+          <div class="search-input-container">
+            <span class="icon search-icon">search</span>
+            <input type="text" class="input input--text search-input" id="search-input"
+                   placeholder="Search for an airport or flight">
+          </div>
+          <div class="search-output">
+
+          </div>
+        </div>
+        <div class="action">
+          <span class="icon action-icon">airplane_ticket</span>
+          <p class="action-text">Add Flight</p>
+        </div>
+        <div class="action">
+          <span class="icon action-icon">explore</span>
+          <p class="action-text">Create Trip</p>
+        </div>
+        <RouterLink
+            to="/about"
+            custom
+            v-slot="{ navigate }">
+          <div class="action" @click="navigate" role="link">
+            <span class="icon action-icon">info</span>
+            <p class="action-text">About</p>
+          </div>
+        </RouterLink>
+      </div>
     </div>
-    <div class="detail-container">
-      <MapSelection_Airport
-          :airportData="this.airportData"
-          v-if="showAirportDetails" />
+
+    <div class="home-container">
+      <div class="map-container">
+        <div id="map"></div>
+      </div>
+      <div class="detail-container">
+        <MapSelection_Airport
+            :airportData="this.airportData"
+            v-if="showAirportDetails" />
+      </div>
     </div>
   </div>
 </template>
@@ -102,6 +136,41 @@ export default {
 </script>
 
 <style scoped>
+.search-container {
+  flex-grow: 4;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--color-background-less);
+  border-radius: .5rem;
+}
+
+.search-icon {
+  margin: 1rem;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  flex-grow: 2;
+  padding-right: 1rem;
+  height: 100%;
+  outline: none;
+  font-size: 1.3rem;
+  color: var(--color-text);
+  border-radius: .5rem;
+}
+
+.search-output {
+  flex-grow: 4;
+  padding: 1rem 0 2rem;
+}
+
 .home-container {
   height: calc(100vh - 2rem);
   display: grid;

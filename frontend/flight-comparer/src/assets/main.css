@@ -1,11 +1,67 @@
 @import './base.css';
 
-#app {
+.view-root {
   display: grid;
   grid-template-columns: 1fr 3fr;
   padding: 0 2rem;
   grid-column-gap: 2rem;
-  font-weight: normal;
+}
+
+.action-pane {
+  background-color: var(--color-background);
+  height: calc(100vh - 4rem - 32px);
+  margin: 2rem 0;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: left;
+  font-size: 1rem;
+  box-shadow: 0 0 10px 0 var(--color-background-least);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-pane {
+  height: calc(100vh - 4rem);
+  margin: 2rem 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 0 10px 0 var(--color-background-least);
+}
+
+.action-container {
+  flex-grow: 4;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.action {
+  position: relative;
+  width: 100%;
+  background: var(--color-background-less);
+  border-radius: .5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.action:last-of-type {
+  margin-bottom: 0;
+}
+
+.action-icon {
+  margin: .9rem 1rem 1rem;
+}
+
+.action-text {
+  text-transform: uppercase;
+  letter-spacing: .15rem;
+  user-select: none;
 }
 
 a {
