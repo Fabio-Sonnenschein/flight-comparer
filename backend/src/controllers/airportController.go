@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
 )
@@ -18,7 +19,8 @@ func GetAirports() gin.HandlerFunc {
 		var airports []models.Airport
 		defer cancel()
 
-		cur, err := airportCollection.Find(ctx, bson.M{})
+		opts := options.Find().SetSort(bson.D{{"code", 1}})
+		cur, err := airportCollection.Find(ctx, bson.M{}, opts)
 		if err != nil {
 			panic(err)
 		}
