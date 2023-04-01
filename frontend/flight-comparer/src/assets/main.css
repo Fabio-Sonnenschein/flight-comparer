@@ -56,6 +56,7 @@
 
 .action-icon {
   margin: .9rem 1rem 1rem;
+  cursor: pointer;
 }
 
 .action-text {

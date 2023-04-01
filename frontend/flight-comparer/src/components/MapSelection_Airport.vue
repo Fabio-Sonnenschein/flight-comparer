@@ -93,6 +93,7 @@ export default {
   margin: 0 0 2rem 0;
   padding: 0 1rem;
   line-height: 4rem;
+  text-align: center;
 }
 
 .map-selection--airport p {
@@ -101,5 +102,6 @@ export default {
   margin: 0;
   padding: 0 1rem;
   line-height: 2rem;
+  text-align: center;
 }
 </style>

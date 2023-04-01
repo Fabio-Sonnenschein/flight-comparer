@@ -38,6 +38,8 @@
 
   --color-heading: var(--text-light-color);
   --color-text: var(--text-light-black);
+
+  font-size: 16px;
 }
 
 @media (prefers-color-scheme: dark) {
