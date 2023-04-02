@@ -78,11 +78,11 @@
         </div>
         <div class="action">
           <span class="icon action-icon">airplane_ticket</span>
-          <p class="action-text">Add Flight</p>
+          <p class="action-text">Add a Flight</p>
         </div>
         <div class="action">
           <span class="icon action-icon">explore</span>
-          <p class="action-text">Create Trip</p>
+          <p class="action-text">Create a Trip</p>
         </div>
         <RouterLink
               to="/about"
@@ -90,7 +90,7 @@
               v-slot="{ navigate }">
           <div class="action" @click="navigate" role="link">
             <span class="icon action-icon">info</span>
-            <p class="action-text">About</p>
+            <p class="action-text">About Flight Comparer</p>
           </div>
         </RouterLink>
       </div>
@@ -117,6 +117,7 @@
 import {defineAsyncComponent} from 'vue';
 import ErrorComponent from '@/components/Error.vue';
 import SearchElement_Airport from '@/components/SearchElement_Airport.vue';
+import L from 'leaflet';
 
 const MapSelection_Airport = defineAsyncComponent({
   loader: () => import('@/components/MapSelection_Airport.vue'),
@@ -129,6 +130,18 @@ const MapSelection_Airport = defineAsyncComponent({
 });
 
 let map;
+
+const blueIcon = L.icon({
+  iconUrl: 'src/assets/airportMarker_blue.svg',
+  iconSize: [25, 31.06],
+  iconAnchor: [12.5, 31]
+});
+
+const redIcon = L.icon({
+  iconUrl: 'src/assets/airportMarker_red.svg',
+  iconSize: [25, 31.06],
+  iconAnchor: [12.5, 31]
+});
 
 export default {
   components: {
@@ -143,10 +156,12 @@ export default {
         flights: false,
         trips: false
       },
+      blueIcon: L.Icon,
       searchQuery: '',
       airports: new Map(),
       airportMarkers: new Map(),
       showAirportDetails: false,
+      selectedAirport: undefined,
       airportData: {
         airportCode: '',
         airportName: '',
@@ -260,7 +275,7 @@ export default {
 
     createAirportMarkers() {
       for (let airport of this.airports) {
-        let marker = L.marker([airport[1].position.latitude, airport[1].position.longitude])
+        let marker = L.marker([airport[1].position.latitude, airport[1].position.longitude], {icon: blueIcon})
           .addTo(map);
         //marker.bindPopup(`<b>${airport.code}</b> - ${airport.name}<br>${airport.location.city}, ${airport.location.country}`);
 
@@ -300,6 +315,11 @@ export default {
     },
 
     airportSelected(airportId) {
+      if (this.selectedAirport !== undefined) {
+        this.selectedAirport.setIcon(blueIcon);
+      }
+      this.selectedAirport = this.airportMarkers.get(airportId);
+      this.selectedAirport.setIcon(redIcon);
       this.showAirportDetails = true;
       this.airportData.airportCode = this.airports.get(airportId).code;
       this.airportData.airportName = this.airports.get(airportId).name;

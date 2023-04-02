@@ -6,6 +6,12 @@
     <h1>{{ this.airportData.airportName }}</h1>
     <p>{{ this.airportData.airportCity }}, {{ this.airportData.airportCountry }} {{ this.getFlagEmoji() }}</p>
   </div>
+  <div class="details-action-container">
+    <div class="details-action">
+      <span class="action-icon icon">info</span>
+      <p class="action-text">More information</p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -14,8 +20,8 @@ export default {
   methods: {
     getFlagEmoji() {
       let charArray = this.airportData.airportCountryA2.toUpperCase()
-          .split('')
-          .map((char) => 127397 + char.charCodeAt(0));
+        .split('')
+        .map((char) => 127397 + char.charCodeAt(0));
       return String.fromCodePoint(...charArray);
     }
   },
@@ -41,12 +47,7 @@ export default {
 .map-selection--background {
   overflow: hidden;
   position: absolute;
-  //background: linear-gradient(135deg, var(--blue-grey), var(--color-accent-blue), var(--color-accent-red) 130%) no-repeat;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
+//background: linear-gradient(135deg, var(--blue-grey), var(--color-accent-blue), var(--color-accent-red) 130%) no-repeat; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
 }
 
 .background-text--large {
@@ -103,5 +104,41 @@ export default {
   padding: 0 1rem;
   line-height: 2rem;
   text-align: center;
+}
+
+.details-action-container {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+}
+
+.details-action {
+  background: var(--color-background-less);
+  border-radius: .5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  margin: 0 1rem 0 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.details-action:last-of-type {
+  margin-right: 0;
+}
+
+.details-action .action-text {
+  opacity: 0;
+  width: 0;
+  transition: .3s;
+}
+
+.details-action:hover > .action-text {
+  opacity: 1;
+  width: 13.5rem;
 }
 </style>

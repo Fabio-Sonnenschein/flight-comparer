@@ -68,12 +68,11 @@
 a {
   text-decoration: none;
   color: var(--color-link);
-  transition: 0.4s;
+  transition: 0.15s;
   padding-bottom: 1px;
+  border-bottom: 0 solid var(--color-link);
 }
 
-@media (hover: hover) {
-  a:hover {
-    border-bottom: 1px solid var(--color-link);
-  }
+a:hover {
+  border-width: 2px;
 }
