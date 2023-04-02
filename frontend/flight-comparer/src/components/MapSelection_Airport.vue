@@ -7,10 +7,15 @@
     <p>{{ this.airportData.airportCity }}, {{ this.airportData.airportCountry }} {{ this.getFlagEmoji() }}</p>
   </div>
   <div class="details-action-container">
-    <div class="details-action">
-      <span class="action-icon icon">info</span>
-      <p class="action-text">More information</p>
-    </div>
+    <RouterLink
+          :to="{ name: 'airport', params: {airportId: this.airportData.airportId} }"
+          custom
+          v-slot="{ navigate }">
+      <div class="details-action" @click="navigate" role="link">
+        <span class="action-icon icon">info</span>
+        <p class="action-text">More information</p>
+      </div>
+    </RouterLink>
   </div>
 </template>
 
@@ -33,6 +38,7 @@ export default {
   },
   props: {
     airportData: {
+      airportId: String,
       airportCode: String,
       airportName: String,
       airportCity: String,

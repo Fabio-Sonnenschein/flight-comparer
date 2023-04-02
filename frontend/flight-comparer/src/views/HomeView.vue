@@ -161,8 +161,9 @@ export default {
       airports: new Map(),
       airportMarkers: new Map(),
       showAirportDetails: false,
-      selectedAirport: undefined,
+      selectedAirportMarker: undefined,
       airportData: {
+        airportId: '',
         airportCode: '',
         airportName: '',
         airportCity: '',
@@ -301,7 +302,8 @@ export default {
       }
     },
 
-    getAirportData(airport) { // airport is a map entry
+    // getAirportData expects a airports map entry of the form [airportId, airportData]
+    getAirportData(airport) {
       let airportId = airport[0];
       airport = airport[1];
       return {
@@ -315,17 +317,16 @@ export default {
     },
 
     airportSelected(airportId) {
-      if (this.selectedAirport !== undefined) {
-        this.selectedAirport.setIcon(blueIcon);
+      if (this.selectedAirportMarker !== undefined) {
+        this.selectedAirportMarker.setIcon(blueIcon);
       }
-      this.selectedAirport = this.airportMarkers.get(airportId);
-      this.selectedAirport.setIcon(redIcon);
+      this.selectedAirportMarker = this.airportMarkers.get(airportId);
+      this.selectedAirportMarker.setIcon(redIcon);
       this.showAirportDetails = true;
-      this.airportData.airportCode = this.airports.get(airportId).code;
-      this.airportData.airportName = this.airports.get(airportId).name;
-      this.airportData.airportCity = this.airports.get(airportId).location.city;
-      this.airportData.airportCountry = this.airports.get(airportId).location.country;
-      this.airportData.airportCountryA2 = this.airports.get(airportId).location.countryA2;
+      // this.airports.get(airportId) only returns the data part of the map entry
+      // however, this.getAirportData expects an entire map entry, not just the data part
+      // therefore, the parameter re-includes the airportId
+      this.airportData = this.getAirportData([airportId, this.airports.get(airportId)]);
     }
   },
   mounted() {
