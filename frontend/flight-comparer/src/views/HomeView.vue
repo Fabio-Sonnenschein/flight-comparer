@@ -103,7 +103,7 @@
       <div class="detail-container">
         <div class="detail-container--empty" v-if="!showAirportDetails">
           <span class="icon">location_on</span>
-          <p>Try selecting something on the map above or the list on the left side to see more details.</p>
+          <p>Try selecting something on the map above or from the list on the left side to see more details.</p>
         </div>
         <MapSelection_Airport
               :airportData="this.airportData"
@@ -302,7 +302,7 @@ export default {
       }
     },
 
-    // getAirportData expects a airports map entry of the form [airportId, airportData]
+    // getAirportData expects an airports map entry of the form [airportId, airportData]
     getAirportData(airport) {
       let airportId = airport[0];
       airport = airport[1];

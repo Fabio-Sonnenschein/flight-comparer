@@ -44,9 +44,7 @@
         </div>
       </div>
       <div class="airport-view-content-map">
-        <span class="avc-map-code">
-          {{ this.airportData.code }}
-        </span>
+        <span class="avc-map-code">{{ this.airportData.code }}</span>
         <div id="airportMap"></div>
         <p class="avc-map-location-text">{{ this.airportData.location.city }}, {{ this.airportData.location.country }}
           {{ this.getFlagEmoji() }}</p>
@@ -149,13 +147,13 @@ export default {
   },
   async mounted() {
     await this.apiGETAirportById();
-    this.getLoungeAirlines();
+    this.getLoungeAirlines().then();
 
     map = L.map('airportMap')
-      .setView([this.airportData.position.latitude, this.airportData.position.longitude], 7);
+      .setView([this.airportData.position.latitude, this.airportData.position.longitude], 11);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 15,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenSteetMap</a>'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     })
       .addTo(map);
 
@@ -166,7 +164,125 @@ export default {
 </script>
 
 <style scoped>
+.airport-view-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2.25rem;
+  overflow: hidden;
+}
+
+.airport-view-header {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  right: 2rem;
+  padding: 2rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background: var(--color-background);
+}
+
 .header-icon {
+  font-size: 2rem;
+  line-height: 2rem;
+  margin: .6rem 2rem 0 0;
   cursor: pointer;
+}
+
+.airport-view-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.airport-view-content {
+  position: absolute;
+  top: 12rem;
+  left: 2rem;
+  right: 2rem;
+  bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.airport-view-content-details {
+  background: var(--color-background);
+  border-radius: 16px;
+  overflow: auto;
+  margin: 0 1rem 0 0;
+}
+
+.avc-section-container {
+
+}
+
+.avc-section-title {
+  margin: 0;
+  font-size: 2.5rem;
+  line-height: 2.4999rem; /* weird line-height issue on the same value as font-size */
+  padding: 2rem;
+  text-transform: uppercase;
+  letter-spacing: .15rem;
+  position: sticky;
+  top: 0;
+  background: var(--color-background);
+  box-shadow: 0 0 200px 0 var(--color-background-69);
+}
+
+.avc-section {
+  padding: 2rem;
+}
+
+.airport-view-content-map {
+  margin: 0 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.avc-map-code {
+  position: relative;
+  font-size: 15rem;
+  margin: 0 0 -4rem 0;
+  padding: 0;
+  line-height: 15rem;
+  font-family: "Roboto Black", sans-serif;
+  -webkit-text-stroke: .975rem transparent;
+  background: linear-gradient(-45deg, var(--blue-grey), var(--color-accent-blue), var(--color-accent-red)) no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--color-background-69);
+  letter-spacing: 1.7rem;
+  z-index: 401;
+  text-indent: 1.7rem;
+  user-select: none;
+}
+
+#airportMap {
+  height: 100%;
+  width: 100%;
+  border-radius: 16px;
+}
+
+.avc-map-location-text {
+  position: absolute;
+  left: 2rem;
+  right: 2rem;
+  bottom: 1rem;
+  z-index: 401;
+  padding: 1.5rem;
+  background: var(--color-background);
+  text-align: center;
+  border-radius: 8px;
+  font-size: 1.5rem;
 }
 </style>

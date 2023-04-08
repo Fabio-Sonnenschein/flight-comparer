@@ -69,8 +69,10 @@ export default {
   -webkit-background-clip: text;
   color: var(--color-background);
   letter-spacing: 1.7rem;
-  left: -3rem;
+  left: -4rem;
   bottom: -3.5rem;
+  user-select: none;
+  text-indent: 1rem;
 }
 
 .map-selection--airport {
