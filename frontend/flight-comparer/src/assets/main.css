@@ -76,3 +76,29 @@ a {
 a:hover {
   border-width: 2px;
 }
+
+.leaflet-touch .leaflet-bar {
+  border: none;
+  margin: 2rem 0 0 2rem;
+}
+
+.leaflet-control-zoom a {
+  border: none;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  padding: .5rem;
+}
+
+.leaflet-touch .leaflet-bar a:hover, .leaflet-touch .leaflet-bar a:focus {
+  background-color: var(--color-background-less);
+}
+
+.leaflet-touch .leaflet-bar a:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.leaflet-touch .leaflet-bar a:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
