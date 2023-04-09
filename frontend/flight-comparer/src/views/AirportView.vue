@@ -13,33 +13,37 @@
       <div class="airport-view-content-details">
         <div class="avc-section-container" v-if="this.hasLounges">
           <h3 class="avc-section-title">Lounges</h3>
-          <div class="avc-section" v-for="lounge in this.airportData.lounges">
-            <table>
-              <tr>
-                <th>Name</th>
-                <td>{{ lounge.name }}</td>
-              </tr>
-              <tr>
-                <th>Type</th>
-                <td>{{ lounge.type }}</td>
-              </tr>
-              <tr>
-                <th>Airlines</th>
-                <td>{{ lounge.airlines }}</td>
-              </tr>
-              <tr>
-                <th>Access</th>
-                <td>{{ lounge.access }}</td>
-              </tr>
-              <tr>
-                <th>Description</th>
-                <td>{{ lounge.description }}</td>
-              </tr>
-              <tr v-if="lounge.shower">
-                <th>Shower</th>
-                <td>{{ lounge.shower ? 'Yes' : 'No' }}</td>
-              </tr>
-            </table>
+          <div class="avc-section avc-section__lounge" v-for="lounge in this.airportData.lounges">
+            <div class="lounge-name-container">
+              <h5 class="lounge-name">{{ lounge.name }}</h5>
+            </div>
+            <div class="avc-section-content-container lounge-type-container">
+              <span class="avc-section-content-container-title">Type</span>
+              <p class="avc-section-content-container-content">{{ lounge.type }}</p>
+            </div>
+            <div class="avc-section-content-container lounge-airlines-container">
+              <span class="avc-section-content-container-title">Airlines</span>
+              <p class="avc-section-content-container-content-li" v-for="airline in lounge.airlines">
+                {{ airline }}
+              </p>
+            </div>
+            <div class="avc-section-content-container lounge-access-container">
+              <span class="avc-section-content-container-title">Access</span>
+              <p class="avc-section-content-container-content">{{ lounge.access }}</p>
+            </div>
+            <div class="avc-section-content-container lounge-amenities-container">
+              <span class="avc-section-content-container-title">Amenities</span>
+              <div class="avc-section-content-container-content-list">
+                <div class="avc-section-content-container-content-list-item" v-if="lounge.shower">
+                  <span class="icon">shower</span>
+                  <p class="avc-section-content-container-content">Shower</p>
+                </div>
+              </div>
+            </div>
+            <div class="avc-section-content-container lounge-description-container">
+              <span class="avc-section-content-container-title">Description</span>
+              <p class="avc-section-content-container-content">{{ lounge.description }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -123,17 +127,17 @@ export default {
       }
       if (this.hasLounges) {
         for (let lounge of this.airportData.lounges) {
-          let airlinesString = '';
+          let airlines = [];
           for (let airlineId of lounge.airlines) {
             if (!this.knownAirlines.has(airlineId)) {
               let airlineData = await this.apiGETAirlineById(airlineId);
               this.knownAirlines.set(airlineId, airlineData);
-              airlinesString += airlineData.name + ', ';
+              airlines.push(airlineData.name);
             } else {
-              airlinesString += this.knownAirlines.get(airlineId).name + ', ';
+              airlines.push(this.knownAirlines.get(airlineId).name);
             }
           }
-          lounge.airlines = airlinesString.slice(0, -2);
+          lounge.airlines = airlines;
         }
       }
     },
@@ -147,7 +151,8 @@ export default {
   },
   async mounted() {
     await this.apiGETAirportById();
-    this.getLoungeAirlines().then();
+    this.getLoungeAirlines()
+      .then();
 
     map = L.map('airportMap')
       .setView([this.airportData.position.latitude, this.airportData.position.longitude], 11);
@@ -204,7 +209,7 @@ export default {
 
 .airport-view-content {
   position: absolute;
-  top: 12rem;
+  top: 11rem;
   left: 2rem;
   right: 2rem;
   bottom: 2rem;
@@ -225,7 +230,7 @@ export default {
 
 .avc-section-title {
   margin: 0;
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   line-height: 2.4999rem; /* weird line-height issue on the same value as font-size */
   padding: 2rem;
   text-transform: uppercase;
@@ -238,6 +243,95 @@ export default {
 
 .avc-section {
   padding: 2rem;
+}
+
+.avc-section__lounge {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+          "name name name"
+          "type access airlines"
+          "amenities amenities airlines"
+          "description description description";
+  column-gap: 1rem;
+  row-gap: 1rem;
+}
+
+.avc-section-content-container {
+  background: var(--color-background-less);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.lounge-name-container {
+  grid-area: name;
+}
+
+.lounge-name {
+  font-size: 1.7rem;
+  line-height: 1.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.lounge-type-container {
+  grid-area: type;
+}
+
+.lounge-airlines-container {
+  grid-area: airlines;
+}
+
+.lounge-access-container {
+  grid-area: access;
+}
+
+.lounge-amenities-container {
+  grid-area: amenities;
+}
+
+.lounge-description-container {
+  grid-area: description;
+}
+
+.avc-section-content-container-title {
+  font-size: 1.3rem;
+}
+
+.avc-section-content-container-content {
+  font-size: 1rem;
+}
+
+.avc-section-content-container-content-li {
+  margin: 0;
+}
+
+.avc-section-content-container-content-li:first-of-type {
+  margin: 1rem 0 0;
+}
+
+.avc-section-content-container-content-list {
+  display: flex;
+  flex-direction: row;
+}
+
+.avc-section-content-container-content-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  min-width: 2rem;
+  min-height: 2rem;
+}
+
+.avc-section-content-container-content-list .icon {
+  font-size: 2rem;
+  margin: 0 0 .5rem;
+}
+
+.avc-section-content-container-content-list .avc-section-content-container-content {
+  margin: 0;
 }
 
 .airport-view-content-map {
