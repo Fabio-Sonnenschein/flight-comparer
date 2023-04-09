@@ -27,6 +27,10 @@
                 {{ airline }}
               </p>
             </div>
+            <div class="avc-section-content-container lounge-location-container">
+              <span class="avc-section-content-container-title">Location</span>
+              <p class="avc-section-content-container-content">{{ lounge.location }}</p>
+            </div>
             <div class="avc-section-content-container lounge-access-container">
               <span class="avc-section-content-container-title">Access</span>
               <p class="avc-section-content-container-content">{{ lounge.access }}</p>
@@ -34,9 +38,9 @@
             <div class="avc-section-content-container lounge-amenities-container">
               <span class="avc-section-content-container-title">Amenities</span>
               <div class="avc-section-content-container-content-list">
-                <div class="avc-section-content-container-content-list-item" v-if="lounge.shower">
-                  <span class="icon">shower</span>
-                  <p class="avc-section-content-container-content">Shower</p>
+                <div class="avc-section-content-container-content-list-item" v-for="amenity in lounge.amenities">
+                  <span class="icon">{{ amenity.iconName }}</span>
+                  <p class="avc-section-content-container-content">{{ amenity.text }}</p>
                 </div>
               </div>
             </div>
@@ -88,9 +92,10 @@ export default {
           {
             access: '',
             airlines: [],
+            amenities: [],
             description: '',
+            location: '',
             name: '',
-            shower: false,
             type: ''
           }
         ],
@@ -251,9 +256,9 @@ export default {
   grid-template-rows: auto;
   grid-template-areas:
           "name name name"
-          "type access airlines"
+          "type location access"
           "amenities amenities airlines"
-          "description description description";
+          "description description airlines";
   column-gap: 1rem;
   row-gap: 1rem;
 }
@@ -300,6 +305,7 @@ export default {
 
 .avc-section-content-container-content {
   font-size: 1rem;
+  margin-bottom: 0;
 }
 
 .avc-section-content-container-content-li {

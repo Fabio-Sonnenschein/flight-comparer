@@ -53,14 +53,25 @@ db.createCollection('airport', {
               access: {
                 bsonType: 'string'
               },
+              amenities: {
+                bsonType: 'array',
+                items: {
+                  bsonType: 'object',
+                  properties: {
+                    iconName: {
+                      bsonType: 'string'
+                    },
+                    text: {
+                      bsonType: 'string'
+                    }
+                  }
+                }
+              },
               location: {
                 bsonType: 'string'
               },
               type: {
                 bsonType: 'string'
-              },
-              shower: {
-                bsonType: 'bool'
               },
               description: {
                 bsonType: 'string'
@@ -523,34 +534,62 @@ let airports = [
       {
         name: 'Lufthansa Business Lounge',
         airlines: [
-          airlineIDs[20]
+          airlineIDs[0],
+          airlineIDs[2],
+          airlineIDs[5],
+          airlineIDs[20],
+          airlineIDs[23],
+          airlineIDs[24],
+          airlineIDs[25],
+          airlineIDs[26],
+          airlineIDs[27],
+          airlineIDs[28]
         ],
-        access: 'Lufthansa or Star Alliance Business Class',
-        location: 'Terminal A',
+        access: 'Lufthansa / Star Alliance Business Class or above',
+        amenities: [
+          {
+            iconName: 'restaurant',
+            text: 'Food'
+          }
+        ],
+        location: 'Concourse A',
         type: 'Regional',
-        shower: false,
-        description: 'after security check'
+        description: 'After the security check'
       },
       {
         name: 'Lufthansa Senator Lounge',
         airlines: [
           airlineIDs[20]
         ],
-        access: 'Lufthansa Senator+, Star Alliance Gold',
-        location: 'Terminal A',
+        access: 'Lufthansa Senator or above / Star Alliance Gold',
+        amenities: [
+          {
+            iconName: 'restaurant',
+            text: 'Food'
+          }
+        ],
+        location: 'Concourse A',
         type: 'Regional',
-        shower: false,
-        description: 'after security check'
+        description: 'After the security check'
       },
       {
         name: 'Emirates Lounge',
         airlines: [
           airlineIDs[10]
         ],
-        access: 'Emirates Business Class',
-        location: 'Terminal C',
+        access: 'Emirates Business Class or above',
+        amenities: [
+          {
+            iconName: 'restaurant',
+            text: 'Food'
+          },
+          {
+            iconName: 'shower',
+            text: 'Shower'
+          }
+        ],
+        location: 'Concourse C',
         type: 'International',
-        shower: true,
         description: 'Non-Schengen Terminal, after security check'
       }
     ]
@@ -824,8 +863,8 @@ let airports = [
       countryA2: 'CA'
     },
     position: {
-      latitude: 49.194914183286116,
-      longitude: -124.8207955360413
+      latitude: 49.194722,
+      longitude: -123.183889
     }
   },
   {
@@ -837,8 +876,8 @@ let airports = [
       countryA2: 'CA'
     },
     position: {
-      latitude: 51.1303602931277,
-      longitude: -115.99201917648318
+      latitude: 51.1225,
+      longitude: -114.013333
     }
   },
   {
@@ -863,8 +902,8 @@ let airports = [
       countryA2: 'CA'
     },
     position: {
-      latitude: 43.680628929123934,
-      longitude: -80.3878736495972
+      latitude: 43.676667,
+      longitude: -79.630556
     }
   },
   {
@@ -876,8 +915,8 @@ let airports = [
       countryA2: 'CA'
     },
     position: {
-      latitude: 45.458241765102336,
-      longitude: -74.24973416328436
+      latitude: 45.470556,
+      longitude: -73.740833
     }
   },
   {
@@ -889,8 +928,8 @@ let airports = [
       countryA2: 'US'
     },
     position: {
-      latitude: 21.332083982892744,
-      longitude: -158.08020210266116
+      latitude: 21.318611,
+      longitude: -157.9225
     }
   },
   {
@@ -902,8 +941,8 @@ let airports = [
       countryA2: 'US'
     },
     position: {
-      latitude: 47.443595790272894,
-      longitude: -123.69764184951785
+      latitude: 47.448889,
+      longitude: -122.309444
     }
   },
   {
@@ -915,8 +954,8 @@ let airports = [
       countryA2: 'US'
     },
     position: {
-      latitude: 37.61701894316063,
-      longitude: -123.61662840843204
+      latitude: 37.618889,
+      longitude: -122.375
     }
   },
   {
@@ -928,8 +967,8 @@ let airports = [
       countryA2: 'US'
     },
     position: {
-      latitude: 33.94344005135328,
-      longitude: -119.5905570983887
+      latitude: 33.9425,
+      longitude: -118.408056
     }
   },
   {
@@ -941,8 +980,8 @@ let airports = [
       countryA2: 'US'
     },
     position: {
-      latitude: 40.64551266584854,
-      longitude: -74.21513366699224
+      latitude: 40.639722,
+      longitude: -73.778889
     }
   },
   {
