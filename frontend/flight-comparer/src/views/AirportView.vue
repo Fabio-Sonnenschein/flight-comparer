@@ -39,7 +39,7 @@
               <span class="avc-section-content-container-title">Amenities</span>
               <div class="avc-section-content-container-content-list">
                 <div class="avc-section-content-container-content-list-item" v-for="amenity in lounge.amenities">
-                  <span class="icon">{{ amenity.iconName }}</span>
+                  <span class="icon">{{ amenity.icon }}</span>
                   <p class="avc-section-content-container-content">{{ amenity.text }}</p>
                 </div>
               </div>
@@ -114,6 +114,7 @@ export default {
         console.error(request.text());
       }
       this.airportData = await request.json();
+      console.log(this.airportData);
     },
 
     async apiGETAirlineById(airlineId) {
@@ -319,6 +320,7 @@ export default {
 .avc-section-content-container-content-list {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .avc-section-content-container-content-list-item {
@@ -327,8 +329,8 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  min-width: 2rem;
-  min-height: 2rem;
+  width: 5rem;
+  min-height: 5rem;
 }
 
 .avc-section-content-container-content-list .icon {
@@ -337,7 +339,9 @@ export default {
 }
 
 .avc-section-content-container-content-list .avc-section-content-container-content {
-  margin: 0;
+  margin: .25rem 0 0;
+  text-align: center;
+  line-height: 1.25rem;
 }
 
 .airport-view-content-map {

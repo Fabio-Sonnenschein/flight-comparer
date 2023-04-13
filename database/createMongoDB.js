@@ -56,15 +56,7 @@ db.createCollection('airport', {
               amenities: {
                 bsonType: 'array',
                 items: {
-                  bsonType: 'object',
-                  properties: {
-                    iconName: {
-                      bsonType: 'string'
-                    },
-                    text: {
-                      bsonType: 'string'
-                    }
-                  }
+                  bsonType: 'objectId'
                 }
               },
               location: {
@@ -78,6 +70,27 @@ db.createCollection('airport', {
               }
             }
           }
+        }
+      }
+    }
+  },
+  validationLevel: 'strict',
+  validationAction: 'warn'
+});
+
+db.createCollection('amenity', {
+  validator: {
+    $jsonSchema: {
+      required: ['icon', 'text'],
+      properties: {
+        description: {
+          bsonType: 'string'
+        },
+        icon: {
+          bsonType: 'string'
+        },
+        text: {
+          bsonType: 'string'
         }
       }
     }
@@ -516,6 +529,56 @@ let airlines = [
 let airlineIDs = db.airline.insertMany(airlines).insertedIds;
 printjson(airlineIDs);
 
+let amenities = [
+  {
+    description: '',
+    icon: 'restaurant',
+    text: 'Food'
+  },
+  {
+    description: '',
+    icon: 'key',
+    text: 'Lockers'
+  },
+  {
+    description: '',
+    icon: 'power',
+    text: 'Power Outlets'
+  },
+  {
+    description: '',
+    icon: 'print',
+    text: 'Printer'
+  },
+  {
+    description: '',
+    icon: 'wc',
+    text: 'Restroom'
+  },
+  {
+    description: '',
+    icon: 'shower',
+    text: 'Shower'
+  },
+  {
+    description: '',
+    icon: 'tv',
+    text: 'TV'
+  },
+  {
+    description: '',
+    icon: 'wifi',
+    text: 'Wifi'
+  },
+  {
+    description: '',
+    icon: 'desktop_windows',
+    text: 'Work Space'
+  }
+]
+
+let amenityIDs = db.amenity.insertMany(amenities).insertedIds;
+printjson(amenityIDs);
 
 let airports = [
   {
@@ -547,10 +610,14 @@ let airports = [
         ],
         access: 'Lufthansa / Star Alliance Business Class or above',
         amenities: [
-          {
-            iconName: 'restaurant',
-            text: 'Food'
-          }
+          amenityIDs[0],
+          amenityIDs[1],
+          amenityIDs[2],
+          amenityIDs[3],
+          amenityIDs[4],
+          amenityIDs[6],
+          amenityIDs[7],
+          amenityIDs[8]
         ],
         location: 'Concourse A',
         type: 'Regional',
@@ -563,10 +630,14 @@ let airports = [
         ],
         access: 'Lufthansa Senator or above / Star Alliance Gold',
         amenities: [
-          {
-            iconName: 'restaurant',
-            text: 'Food'
-          }
+          amenityIDs[0],
+          amenityIDs[1],
+          amenityIDs[2],
+          amenityIDs[3],
+          amenityIDs[4],
+          amenityIDs[6],
+          amenityIDs[7],
+          amenityIDs[8]
         ],
         location: 'Concourse A',
         type: 'Regional',
@@ -579,14 +650,11 @@ let airports = [
         ],
         access: 'Emirates Business Class or above',
         amenities: [
-          {
-            iconName: 'restaurant',
-            text: 'Food'
-          },
-          {
-            iconName: 'shower',
-            text: 'Shower'
-          }
+          amenityIDs[0],
+          amenityIDs[2],
+          amenityIDs[4],
+          amenityIDs[5],
+          amenityIDs[7]
         ],
         location: 'Concourse C',
         type: 'International',

@@ -1,6 +1,7 @@
 package models
 
 type Amenity struct {
-	IconName string `json:"iconName"`
-	Text     string `json:"text"`
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+	Text        string `json:"text"`
 }

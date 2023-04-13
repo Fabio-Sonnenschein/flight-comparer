@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"time"
 )
@@ -19,8 +19,39 @@ func GetAirports() gin.HandlerFunc {
 		var airports []models.Airport
 		defer cancel()
 
-		opts := options.Find().SetSort(bson.D{{"code", 1}})
-		cur, err := airportCollection.Find(ctx, bson.M{}, opts)
+		cur, err := airportCollection.Aggregate(ctx, mongo.Pipeline{
+			bson.D{
+				{"$unwind",
+					bson.D{
+						{"path", "$lounges"},
+						{"preserveNullAndEmptyArrays", true},
+					},
+				},
+			},
+			bson.D{
+				{"$lookup",
+					bson.D{
+						{"from", "amenity"},
+						{"localField", "lounges.amenities"},
+						{"foreignField", "_id"},
+						{"as", "lounges.amenities"},
+					},
+				},
+			},
+			bson.D{
+				{"$group",
+					bson.D{
+						{"_id", "$_id"},
+						{"code", bson.D{{"$first", "$code"}}},
+						{"name", bson.D{{"$first", "$name"}}},
+						{"location", bson.D{{"$first", "$location"}}},
+						{"position", bson.D{{"$first", "$position"}}},
+						{"lounges", bson.D{{"$push", "$lounges"}}},
+					},
+				},
+			},
+			bson.D{{"$sort", bson.D{{"code", 1}}}},
+		})
 		if err != nil {
 			panic(err)
 		}
@@ -39,7 +70,7 @@ func GetAirports() gin.HandlerFunc {
 func GetAirportById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var airport models.Airport
+		var airport []models.Airport
 		defer cancel()
 
 		idParam := c.Param("id")
@@ -48,17 +79,54 @@ func GetAirportById() gin.HandlerFunc {
 			panic(err)
 		}
 
-		query := airportCollection.FindOne(ctx, bson.M{"_id": id})
-		if query.Err() != nil {
-			panic(query.Err())
-		}
-
-		err = query.Decode(&airport)
+		cur, err := airportCollection.Aggregate(ctx, mongo.Pipeline{
+			bson.D{{"$match", bson.D{{"_id", id}}}},
+			bson.D{
+				{"$unwind",
+					bson.D{
+						{"path", "$lounges"},
+						{"preserveNullAndEmptyArrays", true},
+					},
+				},
+			},
+			bson.D{
+				{"$lookup",
+					bson.D{
+						{"from", "amenity"},
+						{"localField", "lounges.amenities"},
+						{"foreignField", "_id"},
+						{"as", "lounges.amenities"},
+					},
+				},
+			},
+			bson.D{
+				{"$group",
+					bson.D{
+						{"_id", "$_id"},
+						{"code", bson.D{{"$first", "$code"}}},
+						{"name", bson.D{{"$first", "$name"}}},
+						{"location", bson.D{{"$first", "$location"}}},
+						{"position", bson.D{{"$first", "$position"}}},
+						{"lounges", bson.D{{"$push", "$lounges"}}},
+					},
+				},
+			},
+			bson.D{{"$sort", bson.D{{"code", 1}}}},
+			bson.D{{"$limit", 1}},
+		})
 		if err != nil {
 			panic(err)
 		}
 
-		c.IndentedJSON(http.StatusOK, airport)
+		err = cur.All(ctx, &airport)
+		if err != nil {
+			panic(err)
+		}
+		if err := cur.Close(ctx); err != nil {
+			panic(err)
+		}
+
+		c.IndentedJSON(http.StatusOK, airport[0])
 		return
 	}
 }
