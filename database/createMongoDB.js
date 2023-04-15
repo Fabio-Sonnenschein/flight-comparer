@@ -1368,3 +1368,33 @@ let airports = [
 
 let airportIDs = db.airport.insertMany(airports).insertedIds;
 printjson(airportIDs);
+
+let flights = [
+  {
+    airline: airlineIDs[0],
+    number: 844,
+    aircraft: 'Boeing 777-300ER',
+    cabin: 'BUSINESS',
+    departure: {
+      airport: airportIDs[25],
+      time: {
+        time: new Date('2023-04-15T22:50:00+04:00'),
+        zone: 'UTC-4',
+        utc: new Date('2023-04-15T22:50:00Z')
+      }
+    },
+    duration: 7.333,
+    overnight: true,
+    arrival: {
+      airport: airportIDs[1],
+      time: {
+        time: new Date('2023-04-16T06:10:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-16T06:10:00Z')
+      }
+    }
+  }
+]
+
+let flightIDs = db.flight.insertMany(flights).insertedIds;
+printjson(flightIDs);

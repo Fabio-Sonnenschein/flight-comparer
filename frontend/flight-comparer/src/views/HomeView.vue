@@ -160,6 +160,8 @@ export default {
       searchQuery: '',
       airports: new Map(),
       airportMarkers: new Map(),
+      flights: new Map(),
+      flightLines: new Map(),
       showAirportDetails: false,
       selectedAirportMarker: undefined,
       airportData: {
@@ -261,6 +263,21 @@ export default {
       }
     },
 
+    async apiGETFlights() {
+      const request = await fetch('http://127.0.0.1:8080/flight/all');
+      if (!request.ok) {
+        console.error(request.text());
+      }
+      const flightList = await request.json();
+      for (let flight of flightList) {
+        flight.appearsInSearch = true;
+        flight.departure.airport = this.airports.get(flight.departure.airport);
+        flight.arrival.airport = this.airports.get(flight.arrival.airport);
+        this.flights.set(flight._id, flight);
+      }
+      this.createFlightLines();
+    },
+
     async apiGETAirports() {
       const request = await fetch('http://127.0.0.1:8080/airport/all');
       if (!request.ok) {
@@ -272,6 +289,18 @@ export default {
         this.airports.set(airport._id, airport);
       }
       this.createAirportMarkers();
+    },
+
+    createFlightLines() {
+      for (let flight of this.flights) {
+        console.log(flight[1].departure.airport.code + ' --> ' + flight[1].arrival.airport.code);
+        let connectedDots = [
+          [flight[1].departure.airport.position.latitude, flight[1].departure.airport.position.longitude],
+          [flight[1].arrival.airport.position.latitude, flight[1].arrival.airport.position.longitude]
+        ];
+        let polyline = L.polyline(connectedDots, {color: 'var(--color-background)'}).addTo(map);
+        this.flightLines.set(flight[0], polyline);
+      }
     },
 
     createAirportMarkers() {
@@ -329,7 +358,7 @@ export default {
       this.airportData = this.getAirportData([airportId, this.airports.get(airportId)]);
     }
   },
-  mounted() {
+  async mounted() {
     map = L.map('map')
       .setView([23.725011735951796, 13.0078125], 2);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -338,7 +367,8 @@ export default {
     })
       .addTo(map);
 
-    this.apiGETAirports();
+    await this.apiGETAirports();
+    await this.apiGETFlights();
   },
   setup() {
   }
