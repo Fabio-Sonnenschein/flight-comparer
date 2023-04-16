@@ -107,13 +107,16 @@
         <div id="map"></div>
       </div>
       <div class="detail-container">
-        <div class="detail-container--empty" v-if="!showAirportDetails">
+        <div class="detail-container--empty" v-if="showMapDetails === this.SHOW_DETAILS__NONE">
           <span class="icon">location_on</span>
           <p>Try selecting something on the map above or from the list on the left side to see more details.</p>
         </div>
         <MapSelection_Airport
               :airportData="this.airportData"
-              v-if="showAirportDetails"/>
+              v-if="showMapDetails === this.SHOW_DETAILS__AIRPORT" />
+        <MapSelection_Flight
+              :flightData="this.flightData"
+              v-if="showMapDetails === this.SHOW_DETAILS__FLIGHT" />
       </div>
     </div>
   </div>
@@ -125,6 +128,7 @@ import ErrorComponent from '@/components/Error.vue';
 import SearchElement_Airport from '@/components/SearchElement_Airport.vue';
 import SearchElement_Flight from '@/components/SearchElement_Flight.vue';
 import L from 'leaflet';
+import MapSelection_Flight from '@/components/MapSelection_Flight.vue';
 
 const MapSelection_Airport = defineAsyncComponent({
   loader: () => import('@/components/MapSelection_Airport.vue'),
@@ -152,6 +156,7 @@ const redIcon = L.icon({
 
 export default {
   components: {
+    MapSelection_Flight,
     SearchElement_Flight,
     SearchElement_Airport,
     MapSelection_Airport
@@ -164,6 +169,9 @@ export default {
         flights: false,
         trips: false
       },
+      SHOW_DETAILS__NONE: 'none',
+      SHOW_DETAILS__AIRPORT: 'airport',
+      SHOW_DETAILS__FLIGHT: 'flight',
       blueIcon: L.Icon,
       searchQuery: '',
       airports: new Map(),
@@ -171,8 +179,9 @@ export default {
       flights: new Map(),
       flightLines: new Map(),
       airlines: new Map(),
-      showAirportDetails: false,
-      selectedAirportMarker: undefined,
+      showMapDetails: 'none',
+      selectedAirportMarkers: [],
+      selectedFlightLines: [],
       airportData: {
         airportId: '',
         airportCode: '',
@@ -320,6 +329,9 @@ export default {
           [flight[1].arrival.airport.position.latitude, flight[1].arrival.airport.position.longitude]
         ];
         let polyline = L.polyline(connectedDots, {color: 'var(--color-accent-blue)'}).addTo(map);
+        polyline.on('click', () => {
+          this.flightSelected(flight[0]);
+        });
         this.flightLines.set(flight[0], polyline);
       }
     },
@@ -328,7 +340,6 @@ export default {
       for (let airport of this.airports) {
         let marker = L.marker([airport[1].position.latitude, airport[1].position.longitude], {icon: blueIcon})
           .addTo(map);
-        //marker.bindPopup(`<b>${airport.code}</b> - ${airport.name}<br>${airport.location.city}, ${airport.location.country}`);
 
         marker.on('click', () => {
           this.airportSelected(airport[0]);
@@ -384,23 +395,52 @@ export default {
     },
 
     airportSelected(airportId) {
-      if (this.selectedAirportMarker !== undefined) {
-        this.selectedAirportMarker.setIcon(blueIcon);
-      }
-      this.selectedAirportMarker = this.airportMarkers.get(airportId);
-      this.selectedAirportMarker.setIcon(redIcon);
-      this.showAirportDetails = true;
+      this.mapDetailsDeSelect();
+      let selectedAirportMarker = this.airportMarkers.get(airportId);
+      selectedAirportMarker.setIcon(redIcon);
+      this.selectedAirportMarkers.push(selectedAirportMarker);
+      this.showMapDetails = this.SHOW_DETAILS__AIRPORT;
       // this.airports.get(airportId) only returns the data part of the map entry
       // however, this.getAirportData expects an entire map entry, not just the data part
       // therefore, the parameter re-includes the airportId
       this.airportData = this.getAirportData([airportId, this.airports.get(airportId)]);
     },
 
+    airportDeSelect() {
+      for (let selectedAirportMarker of this.selectedAirportMarkers) {
+        selectedAirportMarker.setIcon(blueIcon);
+      }
+      this.selectedAirportMarkers = [];
+    },
+
     flightSelected(flightId) {
+      this.mapDetailsDeSelect();
+      let selectedFlightLine = this.flightLines.get(flightId);
+      selectedFlightLine.setStyle({color: 'var(--color-accent-red)'});
+      this.selectedFlightLines.push(selectedFlightLine);
+      let selectedAirportMarker = this.airportMarkers.get(this.flights.get(flightId).departure.airport._id);
+      selectedAirportMarker.setIcon(redIcon);
+      this.selectedAirportMarkers.push(selectedAirportMarker);
+      selectedAirportMarker = this.airportMarkers.get(this.flights.get(flightId).arrival.airport._id);
+      selectedAirportMarker.setIcon(redIcon);
+      this.selectedAirportMarkers.push(selectedAirportMarker);
+      this.showMapDetails = this.SHOW_DETAILS__FLIGHT;
       // this.flights.get(airportId) only returns the data part of the map entry,
       // however, this.getFlightData expects an entire map entry, not just the data part
       // therefore, the parameter re-includes the flightId
       this.flightData = this.getFlightData([flightId, this.flights.get(flightId)]);
+    },
+
+    flightDeSelect() {
+      for (let selectedFlightLine of this.selectedFlightLines) {
+        selectedFlightLine.setStyle({color: 'var(--color-accent-blue)'});
+      }
+      this.selectedFlightLines = [];
+    },
+
+    mapDetailsDeSelect() {
+      this.airportDeSelect();
+      this.flightDeSelect();
     }
   },
   async mounted() {

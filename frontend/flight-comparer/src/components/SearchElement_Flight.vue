@@ -107,7 +107,7 @@
                     timeZone: 'UTC',
                     day: '2-digit',
                     month: '2-digit',
-                    year: '2-digit'
+                    year: 'numeric'
                   })
             }}
           </p>
@@ -136,7 +136,7 @@ export default {
     return {
       dateDifference: '',
       dateDifferenceUTC: ''
-    }
+    };
   },
   methods: {
     calculateDateDifference() {
@@ -159,7 +159,6 @@ export default {
     }
   },
   setup(props) {
-    console.log(props);
     return {props};
   },
   mounted() {

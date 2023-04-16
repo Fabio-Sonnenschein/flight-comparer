@@ -53,7 +53,10 @@ export default {
 .map-selection--background {
   overflow: hidden;
   position: absolute;
-//background: linear-gradient(135deg, var(--blue-grey), var(--color-accent-blue), var(--color-accent-red) 130%) no-repeat; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .background-text--large {
