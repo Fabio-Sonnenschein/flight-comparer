@@ -55,15 +55,21 @@
                   <SearchElement_Airport
                         v-if="airport[1].appearsInSearch"
                         :airport-data="this.getAirportData(airport)"
-                        @click="this.airportSelected(this.getAirportData(airport).airportId)"/>
+                        @click="this.airportSelected(this.getAirportData(airport).airportId)" />
                 </div>
               </div>
               <div class="search-tab" id="search-tab-flights"
                    :class="[searchTabSelected.flights ? 'search-tab--selected' : '']">
-                <div class="search-tab--empty">
+                <div class="search-tab--empty" v-if="this.flights.size <= 0">
                   <span class="icon">airplane_ticket</span>
                   <p>It seems like you haven't entered any flights yet. Try adding a new flight with the button
                     below.</p>
+                </div>
+                <div v-for="flight in this.flights" v-if="this.flights.size > 0">
+                  <SearchElement_Flight
+                        v-if="flight[1].appearsInSearch"
+                        :flight-data="this.getFlightData(flight)"
+                        @click="this.flightSelected(this.getFlightData(flight).flightId)" />
                 </div>
               </div>
               <div class="search-tab" id="search-tab-trips"
@@ -117,6 +123,7 @@
 import {defineAsyncComponent} from 'vue';
 import ErrorComponent from '@/components/Error.vue';
 import SearchElement_Airport from '@/components/SearchElement_Airport.vue';
+import SearchElement_Flight from '@/components/SearchElement_Flight.vue';
 import L from 'leaflet';
 
 const MapSelection_Airport = defineAsyncComponent({
@@ -145,6 +152,7 @@ const redIcon = L.icon({
 
 export default {
   components: {
+    SearchElement_Flight,
     SearchElement_Airport,
     MapSelection_Airport
   },
@@ -162,6 +170,7 @@ export default {
       airportMarkers: new Map(),
       flights: new Map(),
       flightLines: new Map(),
+      airlines: new Map(),
       showAirportDetails: false,
       selectedAirportMarker: undefined,
       airportData: {
@@ -171,7 +180,8 @@ export default {
         airportCity: '',
         airportCountry: '',
         airportCountryA2: ''
-      }
+      },
+      flightData: {}
     };
   },
   methods: {
@@ -271,11 +281,23 @@ export default {
       const flightList = await request.json();
       for (let flight of flightList) {
         flight.appearsInSearch = true;
+        flight.airline = this.airlines.get(flight.airline);
         flight.departure.airport = this.airports.get(flight.departure.airport);
         flight.arrival.airport = this.airports.get(flight.arrival.airport);
         this.flights.set(flight._id, flight);
       }
       this.createFlightLines();
+    },
+
+    async apiGETAirlines() {
+      const request = await fetch('http://127.0.0.1:8080/airline/all');
+      if (!request.ok) {
+        console.error(request.text());
+      }
+      const airlineList = await request.json();
+      for (let airline of airlineList) {
+        this.airlines.set(airline._id, airline);
+      }
     },
 
     async apiGETAirports() {
@@ -293,12 +315,11 @@ export default {
 
     createFlightLines() {
       for (let flight of this.flights) {
-        console.log(flight[1].departure.airport.code + ' --> ' + flight[1].arrival.airport.code);
         let connectedDots = [
           [flight[1].departure.airport.position.latitude, flight[1].departure.airport.position.longitude],
           [flight[1].arrival.airport.position.latitude, flight[1].arrival.airport.position.longitude]
         ];
-        let polyline = L.polyline(connectedDots, {color: 'var(--color-background)'}).addTo(map);
+        let polyline = L.polyline(connectedDots, {color: 'var(--color-accent-blue)'}).addTo(map);
         this.flightLines.set(flight[0], polyline);
       }
     },
@@ -345,6 +366,23 @@ export default {
       };
     },
 
+    // getFlightData expects a flights map entry of the form [flightId, flightData]
+    getFlightData(flight) {
+      let flightId = flight[0];
+      flight = flight[1];
+      return {
+        flightId: flightId,
+        flightNumber: flight.airline.code + ' ' + flight.number.toString(),
+        departure: flight.departure,
+        arrival: flight.arrival,
+        duration: flight.duration,
+        overnight: flight.overnight,
+        airline: flight.airline,
+        aircraft: flight.aircraft,
+        cabin: flight.cabin
+      };
+    },
+
     airportSelected(airportId) {
       if (this.selectedAirportMarker !== undefined) {
         this.selectedAirportMarker.setIcon(blueIcon);
@@ -356,6 +394,13 @@ export default {
       // however, this.getAirportData expects an entire map entry, not just the data part
       // therefore, the parameter re-includes the airportId
       this.airportData = this.getAirportData([airportId, this.airports.get(airportId)]);
+    },
+
+    flightSelected(flightId) {
+      // this.flights.get(airportId) only returns the data part of the map entry,
+      // however, this.getFlightData expects an entire map entry, not just the data part
+      // therefore, the parameter re-includes the flightId
+      this.flightData = this.getFlightData([flightId, this.flights.get(flightId)]);
     }
   },
   async mounted() {
@@ -368,6 +413,7 @@ export default {
       .addTo(map);
 
     await this.apiGETAirports();
+    await this.apiGETAirlines();
     await this.apiGETFlights();
   },
   setup() {

@@ -1373,7 +1373,7 @@ let flights = [
   {
     airline: airlineIDs[0],
     number: 844,
-    aircraft: 'Boeing 777-300ER',
+    aircraft: 'BOEING 777-300ER',
     cabin: 'BUSINESS',
     departure: {
       airport: airportIDs[25],
