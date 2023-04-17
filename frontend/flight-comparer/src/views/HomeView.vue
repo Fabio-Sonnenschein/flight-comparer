@@ -449,6 +449,9 @@ export default {
                 .includes(query) &&
               !(flight[1].airline.code + flight[1].number.toString()).toLowerCase()
                 .includes(query) &&
+              !flight[1].departure.airport.code.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
               !flight[1].departure.airport.location.city.replace(/\s/g, '')
                 .toLowerCase()
                 .includes(query) &&
@@ -456,6 +459,9 @@ export default {
                 .toLowerCase()
                 .includes(query) &&
               !flight[1].departure.airport.location.countryA2
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].arrival.airport.code.replace(/\s/g, '')
                 .toLowerCase()
                 .includes(query) &&
               !flight[1].arrival.airport.location.city.replace(/\s/g, '')
