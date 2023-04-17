@@ -10,7 +10,7 @@
         <span class="icon">event</span>
         <p>
           {{
-            new Date(this.flightData.departure.time.utc)
+            new Date(this.flightData.departure.time.time)
                 .toLocaleString(Intl.DateTimeFormat()
                     .resolvedOptions().locale, {
                   timeZone: 'UTC',

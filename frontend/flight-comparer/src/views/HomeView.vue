@@ -14,25 +14,29 @@
                   @input="search">
             <span class="icon search-clear-icon" @click="clearSearch" v-if="this.searchQuery !== ''">clear</span>
           </div>
+          <div class="search-error-container" v-if="this.searchError">
+            <p v-if="this.searchErrors.TooManySpecifications">Sorry, currently there is only one search specification
+              supported.<br>(Try for example "city: Brisbane")</p>
+          </div>
           <div class="search-output">
             <div class="search-tab-selector-container">
-              <div class="search-tab-selector" @click="selectSearchTab('search')"
+              <div class="search-tab-selector" @click="selectSearchTab(this.SEARCH_TAB__SEARCH)"
                    :class="[searchTabSelected.search ? 'search-tab-selector--selected' : '']">
                 <span class="search-tab-selector-icon icon">search</span>
                 <span class="search-tab-selector-text">Results</span>
               </div>
-              <div class="search-tab-selector" @click="selectSearchTab('airports')"
-                   :class="[searchTabSelected.airports ? 'search-tab-selector--selected' : '']">
+              <div class="search-tab-selector" @click="selectSearchTab(this.SEARCH_TAB__AIRPORT)"
+                   :class="[searchTabSelected.airport ? 'search-tab-selector--selected' : '']">
                 <span class="search-tab-selector-icon icon">location_on</span>
                 <span class="search-tab-selector-text">Airports</span>
               </div>
-              <div class="search-tab-selector" @click="selectSearchTab('flights')"
-                   :class="[searchTabSelected.flights ? 'search-tab-selector--selected' : '']">
+              <div class="search-tab-selector" @click="selectSearchTab(this.SEARCH_TAB__FLIGHT)"
+                   :class="[searchTabSelected.flight ? 'search-tab-selector--selected' : '']">
                 <span class="search-tab-selector-icon icon">airplane_ticket</span>
                 <span class="search-tab-selector-text">Flights</span>
               </div>
-              <div class="search-tab-selector" @click="selectSearchTab('trips')"
-                   :class="[searchTabSelected.trips ? 'search-tab-selector--selected' : '']">
+              <div class="search-tab-selector" @click="selectSearchTab(this.SEARCH_TAB__TRIP)"
+                   :class="[searchTabSelected.trip ? 'search-tab-selector--selected' : '']">
                 <span class="search-tab-selector-icon icon">explore</span>
                 <span class="search-tab-selector-text">Trips</span>
               </div>
@@ -40,13 +44,25 @@
             <div class="search-tab-container">
               <div class="search-tab" id="search-tab-search"
                    :class="[searchTabSelected.search ? 'search-tab--selected' : '']">
-                <div class="search-tab--empty">
+                <div class="search-tab--empty" v-if="this.displaySearchHint">
                   <span class="icon">search</span>
                   <p>Try entering something in the search field above. The results will appear here.</p>
                 </div>
+                <div v-for="airport in this.airports" v-if="this.airports.size > 0">
+                  <SearchElement_Airport
+                        v-if="airport[1].appearsInSearch"
+                        :airport-data="this.getAirportData(airport)"
+                        @click="this.airportSelected(this.getAirportData(airport).airportId)"/>
+                </div>
+                <div v-for="flight in this.flights" v-if="this.flights.size > 0">
+                  <SearchElement_Flight
+                        v-if="flight[1].appearsInSearch"
+                        :flight-data="this.getFlightData(flight)"
+                        @click="this.flightSelected(this.getFlightData(flight).flightId)"/>
+                </div>
               </div>
               <div class="search-tab" id="search-tab-airports"
-                   :class="[searchTabSelected.airports ? 'search-tab--selected' : '']">
+                   :class="[searchTabSelected.airport ? 'search-tab--selected' : '']">
                 <div class="search-tab--empty" v-if="this.airports.size <= 0">
                   <span class="icon">location_on</span>
                   <p>Oh, it seems like there are no known airports saved on our end. Sorry about that.</p>
@@ -55,11 +71,11 @@
                   <SearchElement_Airport
                         v-if="airport[1].appearsInSearch"
                         :airport-data="this.getAirportData(airport)"
-                        @click="this.airportSelected(this.getAirportData(airport).airportId)" />
+                        @click="this.airportSelected(this.getAirportData(airport).airportId)"/>
                 </div>
               </div>
               <div class="search-tab" id="search-tab-flights"
-                   :class="[searchTabSelected.flights ? 'search-tab--selected' : '']">
+                   :class="[searchTabSelected.flight ? 'search-tab--selected' : '']">
                 <div class="search-tab--empty" v-if="this.flights.size <= 0">
                   <span class="icon">airplane_ticket</span>
                   <p>It seems like you haven't entered any flights yet. Try adding a new flight with the button
@@ -69,11 +85,11 @@
                   <SearchElement_Flight
                         v-if="flight[1].appearsInSearch"
                         :flight-data="this.getFlightData(flight)"
-                        @click="this.flightSelected(this.getFlightData(flight).flightId)" />
+                        @click="this.flightSelected(this.getFlightData(flight).flightId)"/>
                 </div>
               </div>
               <div class="search-tab" id="search-tab-trips"
-                   :class="[searchTabSelected.trips ? 'search-tab--selected' : '']">
+                   :class="[searchTabSelected.trip ? 'search-tab--selected' : '']">
                 <div class="search-tab--empty">
                   <span class="icon">explore</span>
                   <p>It seems like you haven't created any trips yet. Try creating a new trip with the button below.</p>
@@ -113,32 +129,21 @@
         </div>
         <MapSelection_Airport
               :airportData="this.airportData"
-              v-if="showMapDetails === this.SHOW_DETAILS__AIRPORT" />
+              v-if="showMapDetails === this.SHOW_DETAILS__AIRPORT"/>
         <MapSelection_Flight
               :flightData="this.flightData"
-              v-if="showMapDetails === this.SHOW_DETAILS__FLIGHT" />
+              v-if="showMapDetails === this.SHOW_DETAILS__FLIGHT"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {defineAsyncComponent} from 'vue';
-import ErrorComponent from '@/components/Error.vue';
 import SearchElement_Airport from '@/components/SearchElement_Airport.vue';
 import SearchElement_Flight from '@/components/SearchElement_Flight.vue';
-import L from 'leaflet';
+import MapSelection_Airport from '@/components/MapSelection_Airport.vue';
 import MapSelection_Flight from '@/components/MapSelection_Flight.vue';
-
-const MapSelection_Airport = defineAsyncComponent({
-  loader: () => import('@/components/MapSelection_Airport.vue'),
-  errorComponent: ErrorComponent,
-  onError(error, retry, fail, attempts) {
-    console.warn(attempts);
-    console.error(error);
-    fail();
-  }
-});
+import L from 'leaflet';
 
 let map;
 
@@ -165,15 +170,23 @@ export default {
     return {
       searchTabSelected: {
         search: false,
-        airports: true,
-        flights: false,
-        trips: false
+        airport: true,
+        flight: false,
+        trip: false
+      },
+      SEARCH_TAB__SEARCH: 'search',
+      SEARCH_TAB__AIRPORT: 'airport',
+      SEARCH_TAB__FLIGHT: 'flight',
+      SEARCH_TAB__TRIP: 'trip',
+      searchQuery: '',
+      displaySearchHint: true,
+      searchError: false,
+      searchErrors: {
+        TooManySpecifications: false
       },
       SHOW_DETAILS__NONE: 'none',
       SHOW_DETAILS__AIRPORT: 'airport',
       SHOW_DETAILS__FLIGHT: 'flight',
-      blueIcon: L.Icon,
-      searchQuery: '',
       airports: new Map(),
       airportMarkers: new Map(),
       flights: new Map(),
@@ -195,18 +208,32 @@ export default {
   },
   methods: {
     search() {
+      if (this.displaySearchHint) {
+        this.displaySearchHint = false;
+      }
       for (let airport of this.airports) {
         airport[1].appearsInSearch = true;
       }
+      this.displayAirports();
+      for (let flight of this.flights) {
+        flight[1].appearsInSearch = true;
+      }
+      this.displayFlights();
       let query = this.searchQuery.replace(/\s/g, '')
         .toLowerCase();
       if (query.includes(':')) {
         let split = query.split(':');
+        this.searchErrors.TooManySpecifications = (split.length > 2);
+        this.determineSearchErrorState();
         switch (split[0]) {
           case 'code':
-            if (!this.searchTabSelected.airports) {
-              this.selectSearchTab('airports');
+            if (!this.searchTabSelected.airport) {
+              this.selectSearchTab(this.SEARCH_TAB__AIRPORT);
             }
+            for (let flight of this.flights) {
+              flight[1].appearsInSearch = false;
+            }
+            this.hideFlights();
             let codeQuery = split[1];
             for (let airport of this.airports) {
               if (!airport[1].code.toLowerCase()
@@ -217,29 +244,234 @@ export default {
             this.hideAirports();
             this.displayAirports();
             break;
-          case 'flight':
-            if (!this.searchTabSelected.flights) {
-              this.selectSearchTab('flights');
+          case 'number':
+            if (!this.searchTabSelected.flight) {
+              this.selectSearchTab(this.SEARCH_TAB__FLIGHT);
             }
-            console.log(split[1]);
+            for (let airport of this.airports) {
+              airport[1].appearsInSearch = false;
+            }
+            this.hideAirports();
+            let numberQuery = split[1];
+            for (let flight of this.flights) {
+              if (!(flight[1].airline.code + flight[1].number.toString()).toLowerCase()
+                .includes(numberQuery)) {
+                flight[1].appearsInSearch = false;
+              }
+            }
+            this.hideFlights();
+            this.displayFlights();
+            break;
+          case 'city':
+            if (!this.searchTabSelected.search) {
+              this.selectSearchTab(this.SEARCH_TAB__SEARCH);
+            }
+            let cityQuery = split[1];
+            for (let airport of this.airports) {
+              if (!airport[1].location.city.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(cityQuery)) {
+                airport[1].appearsInSearch = false;
+              }
+            }
+            this.hideAirports();
+            this.displayAirports();
+            for (let flight of this.flights) {
+              if (!flight[1].departure.airport.location.city.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(cityQuery) &&
+                  !flight[1].arrival.airport.location.city.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(cityQuery)) {
+                flight[1].appearsInSearch = false;
+              }
+            }
+            this.hideFlights();
+            this.displayFlights();
+            break;
+          case 'country':
+            if (!this.searchTabSelected.search) {
+              this.selectSearchTab(this.SEARCH_TAB__SEARCH);
+            }
+            let countryQuery = split[1];
+            for (let airport of this.airports) {
+              if (!airport[1].location.country.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(countryQuery) &&
+                  !airport[1].location.countryA2.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(countryQuery)) {
+                airport[1].appearsInSearch = false;
+              }
+            }
+            this.hideAirports();
+            this.displayAirports();
+            for (let flight of this.flights) {
+              if (!flight[1].departure.airport.location.country.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(countryQuery) &&
+                  !flight[1].departure.airport.location.countryA2.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(countryQuery) &&
+                  !flight[1].arrival.airport.location.country.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(countryQuery) &&
+                  !flight[1].arrival.airport.location.countryA2.replace(/\s/g, '')
+                    .toLowerCase()
+                    .includes(countryQuery)) {
+                flight[1].appearsInSearch = false;
+              }
+            }
+            this.hideFlights();
+            this.displayFlights();
+            break;
+          case 'airline':
+            if (!this.searchTabSelected.search) {
+              this.selectSearchTab(this.SEARCH_TAB__SEARCH);
+            }
+            for (let airport of this.airports) {
+              airport[1].appearsInSearch = false;
+            }
+            this.hideAirports();
+            let airlineQuery = split[1];
+            for (let flight of this.flights) {
+              if (!flight[1].airline.code.toLowerCase()
+                    .includes(airlineQuery) &&
+                  !flight[1].airline.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(airlineQuery)) {
+                flight[1].appearsInSearch = false;
+              }
+            }
+            this.hideFlights();
+            this.displayFlights();
+            break;
+          case 'airport':
+            if (!this.searchTabSelected.search) {
+              this.selectSearchTab(this.SEARCH_TAB__SEARCH);
+            }
+            for (let flight of this.flights) {
+              flight[1].appearsInSearch = false;
+            }
+            this.hideFlights();
+            let airportQuery = split[1];
+            for (let airport of this.airports) {
+              if (!airport[1].code.toLowerCase()
+                    .includes(airportQuery) &&
+                  !airport[1].name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(airportQuery) &&
+                  !airport[1].location.city.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(airportQuery)) {
+                airport[1].appearsInSearch = false;
+              }
+            }
+            this.hideAirports();
+            this.displayAirports();
+            break;
+          case 'flight':
+            if (!this.searchTabSelected.flight) {
+              this.selectSearchTab(this.SEARCH_TAB__FLIGHT);
+            }
+            for (let airport of this.airports) {
+              airport[1].appearsInSearch = false;
+            }
+            this.hideAirports();
+            let flightQuery = split[1];
+            for (let flight of this.flights) {
+              if (!flight[1].airline.code.toLowerCase()
+                    .includes(flightQuery) &&
+                  !flight[1].airline.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(flightQuery) &&
+                  !flight[1].departure.airport.code.toLowerCase()
+                    .includes(flightQuery) &&
+                  !flight[1].departure.airport.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(flightQuery) &&
+                  !flight[1].arrival.airport.code.toLowerCase()
+                    .includes(flightQuery) &&
+                  !flight[1].arrival.airport.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(flightQuery) &&
+                  !(flight[1].airline.code + flight[1].number.toString()).toLowerCase()
+                    .includes(flightQuery)) {
+                flight[1].appearsInSearch = false;
+              }
+            }
+            this.hideFlights();
+            this.displayFlights();
             break;
           case 'trip':
-            if (!this.searchTabSelected.trips) {
-              this.selectSearchTab('trips');
+            if (!this.searchTabSelected.trip) {
+              this.selectSearchTab(this.SEARCH_TAB__TRIP);
             }
             console.log(split[1]);
             break;
           default:
             if (!this.searchTabSelected.search) {
-              this.selectSearchTab('search');
+              this.selectSearchTab(this.SEARCH_TAB__SEARCH);
             }
             console.log(split[0] + ':' + split[1]);
         }
       } else {
         if (!this.searchTabSelected.search) {
-          this.selectSearchTab('search');
+          this.selectSearchTab(this.SEARCH_TAB__SEARCH);
         }
-        console.log(query);
+        for (let airport of this.airports) {
+          if (!airport[1].location.city.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !airport[1].location.country.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !airport[1].location.countryA2.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !airport[1].name.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !airport[1].code
+                .toLowerCase()
+                .includes(query)) {
+            airport[1].appearsInSearch = false;
+          }
+        }
+        this.hideAirports();
+        this.displayAirports();
+        for (let flight of this.flights) {
+          if (!flight[1].airline.name.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].airline.code
+                .toLowerCase()
+                .includes(query) &&
+              !(flight[1].airline.code + flight[1].number.toString()).toLowerCase()
+                .includes(query) &&
+              !flight[1].departure.airport.location.city.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].departure.airport.location.country.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].departure.airport.location.countryA2
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].arrival.airport.location.city.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].arrival.airport.location.country.replace(/\s/g, '')
+                .toLowerCase()
+                .includes(query) &&
+              !flight[1].arrival.airport.location.countryA2
+                .toLowerCase()
+                .includes(query)) {
+            flight[1].appearsInSearch = false;
+          }
+        }
+        this.hideFlights();
+        this.displayFlights();
       }
     },
 
@@ -249,33 +481,43 @@ export default {
         airport[1].appearsInSearch = true;
       }
       this.displayAirports();
+      for (let flight of this.flights) {
+        flight[1].appearsInSearch = true;
+      }
+      this.displayFlights();
+    },
+
+    determineSearchErrorState() {
+      this.searchError = false;
+      this.searchError = this.searchError || this.searchErrors.TooManySpecifications;
+      return this.searchError;
     },
 
     selectSearchTab(tabName) {
       switch (tabName) {
-        case 'search':
+        case this.SEARCH_TAB__SEARCH:
           for (let i in this.searchTabSelected) {
             this.searchTabSelected[i] = false;
           }
           this.searchTabSelected.search = true;
           break;
-        case 'airports':
+        case this.SEARCH_TAB__AIRPORT:
           for (let i in this.searchTabSelected) {
             this.searchTabSelected[i] = false;
           }
-          this.searchTabSelected.airports = true;
+          this.searchTabSelected.airport = true;
           break;
-        case 'flights':
+        case this.SEARCH_TAB__FLIGHT:
           for (let i in this.searchTabSelected) {
             this.searchTabSelected[i] = false;
           }
-          this.searchTabSelected.flights = true;
+          this.searchTabSelected.flight = true;
           break;
-        case 'trips':
+        case this.SEARCH_TAB__TRIP:
           for (let i in this.searchTabSelected) {
             this.searchTabSelected[i] = false;
           }
-          this.searchTabSelected.trips = true;
+          this.searchTabSelected.trip = true;
           break;
         default:
           break;
@@ -328,7 +570,8 @@ export default {
           [flight[1].departure.airport.position.latitude, flight[1].departure.airport.position.longitude],
           [flight[1].arrival.airport.position.latitude, flight[1].arrival.airport.position.longitude]
         ];
-        let polyline = L.polyline(connectedDots, {color: 'var(--color-accent-blue)'}).addTo(map);
+        let polyline = L.polyline(connectedDots, {color: 'var(--color-accent-blue)'})
+          .addTo(map);
         polyline.on('click', () => {
           this.flightSelected(flight[0]);
         });
@@ -360,6 +603,21 @@ export default {
     hideAirports() {
       for (let marker of this.airportMarkers) {
         marker[1].setOpacity(0);
+      }
+    },
+
+    displayFlights() {
+      for (let flight of this.flights) {
+        if (flight[1].appearsInSearch) {
+          this.flightLines.get(flight[0])
+            .setStyle({opacity: 1});
+        }
+      }
+    },
+
+    hideFlights() {
+      for (let line of this.flightLines) {
+        line[1].setStyle({opacity: 0});
       }
     },
 
@@ -418,12 +676,17 @@ export default {
       let selectedFlightLine = this.flightLines.get(flightId);
       selectedFlightLine.setStyle({color: 'var(--color-accent-red)'});
       this.selectedFlightLines.push(selectedFlightLine);
-      let selectedAirportMarker = this.airportMarkers.get(this.flights.get(flightId).departure.airport._id);
+      let departureAirportId = this.flights.get(flightId).departure.airport._id;
+      let selectedAirportMarker = this.airportMarkers.get(departureAirportId);
       selectedAirportMarker.setIcon(redIcon);
+      this.airports.get(departureAirportId).appearsInSearch = true;
       this.selectedAirportMarkers.push(selectedAirportMarker);
-      selectedAirportMarker = this.airportMarkers.get(this.flights.get(flightId).arrival.airport._id);
+      let arrivalAirportId = this.flights.get(flightId).arrival.airport._id;
+      selectedAirportMarker = this.airportMarkers.get(arrivalAirportId);
       selectedAirportMarker.setIcon(redIcon);
+      this.airports.get(arrivalAirportId).appearsInSearch = true;
       this.selectedAirportMarkers.push(selectedAirportMarker);
+      this.displayAirports();
       this.showMapDetails = this.SHOW_DETAILS__FLIGHT;
       // this.flights.get(airportId) only returns the data part of the map entry,
       // however, this.getFlightData expects an entire map entry, not just the data part
@@ -495,6 +758,18 @@ export default {
 .search-clear-icon {
   margin: 1rem 1rem 1rem 0;
   cursor: pointer;
+}
+
+.search-error-container {
+  background: var(--color-background-less);
+  margin: 1rem 0 0;
+  padding: 1rem;
+  border: 2px solid var(--color-error);
+  border-radius: 8px;
+}
+
+.search-error-container p {
+  margin: 0;
 }
 
 .search-output {

@@ -20,6 +20,7 @@
   --color-accent-blue: #435982;
   --color-accent-red: #ff8282;
   --color-link: #8e556a;
+  --color-error: #eb3941;
 
   --text-light-color: var(--color-accent-blue);
   --text-light-black: var(--black);
