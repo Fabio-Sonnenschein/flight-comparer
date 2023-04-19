@@ -197,6 +197,7 @@ export default {
   justify-content: flex-start;
   align-items: flex-start;
   background: var(--color-background);
+  box-shadow: 0 0 10px 0 var(--color-background-least);
 }
 
 .header-icon {
@@ -228,6 +229,7 @@ export default {
   border-radius: 16px;
   overflow: auto;
   margin: 0 1rem 0 0;
+  box-shadow: 0 0 10px 0 var(--color-background-least);
 }
 
 .avc-section-container {
@@ -375,6 +377,7 @@ export default {
   height: 100%;
   width: 100%;
   border-radius: 16px;
+  box-shadow: 0 0 10px -7px var(--color-background-least);
 }
 
 .avc-map-location-text {

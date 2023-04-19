@@ -9,10 +9,10 @@
 
 .action-pane {
   background-color: var(--color-background);
-  height: calc(100vh - 4rem - 32px);
+  height: calc(100vh - 6rem); /* 2rem (margin-top) + 2rem (margin-bottom) + 2 * 1rem (padding) */
   margin: 2rem 0;
   border-radius: 16px;
-  padding: 16px;
+  padding: 1rem;
   text-align: left;
   font-size: 1rem;
   box-shadow: 0 0 10px 0 var(--color-background-least);
@@ -20,14 +20,57 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .content-pane {
-  height: calc(100vh - 4rem);
+  height: calc(100vh - 4rem); /* only 4 rem because the content pane sets its own padding */
   margin: 2rem 0;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 0 10px 0 var(--color-background-least);
+  position: relative;
+}
+
+.search-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--color-background-less);
+  border-radius: .5rem;
+}
+
+.search-icon {
+  margin: 1rem;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  flex-grow: 2;
+  padding-right: 1rem;
+  height: 100%;
+  outline: none;
+  font-size: 1.3rem;
+  color: var(--color-text);
+  border-radius: .5rem;
+}
+
+.search-clear-icon {
+  margin: 1rem 1rem 1rem 0;
+  cursor: pointer;
+}
+
+.search-error-container {
+  background: var(--color-background-less);
+  margin: 1rem 0 0;
+  padding: 1rem;
+  border: 2px solid var(--color-error);
+  border-radius: 8px;
+}
+
+.search-error-container p {
+  margin: 0;
 }
 
 .action-container {
@@ -40,7 +83,6 @@
 
 .action {
   position: relative;
-  width: 100%;
   background: var(--color-background-less);
   border-radius: .5rem;
   margin-bottom: 1rem;
@@ -55,11 +97,14 @@
 }
 
 .action-icon {
-  margin: .9rem 1rem 1rem;
+  margin: 1rem;
   cursor: pointer;
 }
 
 .action-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1rem;
   text-transform: uppercase;
   letter-spacing: .15rem;
   user-select: none;

@@ -111,8 +111,8 @@
               custom
               v-slot="{ navigate }">
           <div class="action" @click="navigate" role="link">
-            <span class="icon action-icon">info</span>
-            <p class="action-text">About Flight Comparer</p>
+            <span class="icon action-icon">settings</span>
+            <p class="action-text">Preferences</p>
           </div>
         </RouterLink>
       </div>
@@ -735,47 +735,6 @@ export default {
   flex-grow: 4;
   display: flex;
   flex-direction: column;
-}
-
-.search-input-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background: var(--color-background-less);
-  border-radius: .5rem;
-}
-
-.search-icon {
-  margin: 1rem;
-}
-
-.search-input {
-  background: transparent;
-  border: none;
-  flex-grow: 2;
-  padding-right: 1rem;
-  height: 100%;
-  outline: none;
-  font-size: 1.3rem;
-  color: var(--color-text);
-  border-radius: .5rem;
-}
-
-.search-clear-icon {
-  margin: 1rem 1rem 1rem 0;
-  cursor: pointer;
-}
-
-.search-error-container {
-  background: var(--color-background-less);
-  margin: 1rem 0 0;
-  padding: 1rem;
-  border: 2px solid var(--color-error);
-  border-radius: 8px;
-}
-
-.search-error-container p {
-  margin: 0;
 }
 
 .search-output {

@@ -37,6 +37,8 @@
   --color-background-69: var(--white-69);
   --color-background-gradient-00: var(--white-00);
 
+  --color-accent: var(--color-accent-blue);
+
   --color-heading: var(--text-light-color);
   --color-text: var(--text-light-black);
 
@@ -51,6 +53,8 @@
     --color-background-gradient-df: var(--black-df);
     --color-background-69: var(--black-69);
     --color-background-gradient-00: var(--black-00);
+
+    --color-accent: var(--color-accent-red);
 
     --color-heading: var(--text-dark-color);
     --color-text: var(--text-dark-white);
