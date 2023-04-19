@@ -536,14 +536,16 @@ export default {
         console.error(request.text());
       }
       const flightList = await request.json();
-      for (let flight of flightList) {
-        flight.appearsInSearch = true;
-        flight.airline = this.airlines.get(flight.airline);
-        flight.departure.airport = this.airports.get(flight.departure.airport);
-        flight.arrival.airport = this.airports.get(flight.arrival.airport);
-        this.flights.set(flight._id, flight);
+      if (flightList !== null && flightList.length > 0) {
+        for (let flight of flightList) {
+          flight.appearsInSearch = true;
+          flight.airline = this.airlines.get(flight.airline);
+          flight.departure.airport = this.airports.get(flight.departure.airport);
+          flight.arrival.airport = this.airports.get(flight.arrival.airport);
+          this.flights.set(flight._id, flight);
+        }
+        this.createFlightLines();
       }
-      this.createFlightLines();
     },
 
     async apiGETAirlines() {

@@ -21,15 +21,18 @@
         </div>
         <div class="search-error-container" v-if="this.searchError">
         </div>
-        <div class="search-output">
+        <div class="search-output"
+             :key="airlineListKey">
           <div class="search-output--empty" v-if="this.airlines.size <= 0">
             <span class="icon">airlines</span>
             <p>It seems there are no airlines saved. Add an airline with the button above, next to the search.</p>
           </div>
-          <div v-for="airline in this.airlines" v-if="this.airlines.size > 0">
+          <div v-for="airline in this.airlines"
+               v-if="this.airlines.size > 0">
             <SearchElement_Airline
                   v-if="airline[1].appearsInSearch"
                   :airline-data="this.getAirlineData(airline)"
+                  v-on:action="deleteAirline"
                   :editable="true"/>
           </div>
         </div>
@@ -48,7 +51,8 @@ export default {
     return {
       searchError: false,
       searchQuery: '',
-      airlines: new Map()
+      airlines: new Map(),
+      airlineListKey: 0
     };
   },
   methods: {
@@ -91,6 +95,11 @@ export default {
 
     getAirlineData(airline) {
       return airline[1];
+    },
+
+    deleteAirline(airlineId) {
+      this.airlines.delete(airlineId);
+      this.airlineListKey++;
     }
   },
   async mounted() {

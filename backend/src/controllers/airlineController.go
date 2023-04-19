@@ -60,3 +60,55 @@ func GetAirlineById() gin.HandlerFunc {
 		return
 	}
 }
+
+func UpdateAirline() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var airline models.Airline
+		defer cancel()
+
+		err := c.BindJSON(&airline)
+		if err != nil {
+			panic(err)
+		}
+
+		result, err := airlineCollection.UpdateOne(ctx, bson.D{{"_id", airline.ID}}, bson.D{{"$set", bson.D{
+			{"_id", airline.ID},
+			{"alliance", airline.Alliance},
+			{"code", airline.Code},
+			{"name", airline.Name},
+		}}})
+		if err != nil {
+			panic(err)
+		}
+
+		c.IndentedJSON(http.StatusOK, result)
+		return
+	}
+}
+
+func DeleteAirline() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		idParam := c.Param("id")
+		id, err := primitive.ObjectIDFromHex(idParam)
+		if err != nil {
+			panic(err)
+		}
+
+		result, err := airlineCollection.DeleteOne(ctx, bson.D{{"_id", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = flightCollection.DeleteMany(ctx, bson.D{{"airline", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		c.IndentedJSON(http.StatusOK, result)
+		return
+	}
+}
