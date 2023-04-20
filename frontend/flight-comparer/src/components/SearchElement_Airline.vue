@@ -98,9 +98,9 @@ export default {
         },
         body: JSON.stringify({
           _id: this.airlineData._id,
+          alliance: this.airlineAlliance_edit,
           code: this.airlineCode_edit,
-          name: this.airlineName_edit,
-          alliance: this.airlineAlliance_edit
+          name: this.airlineName_edit
         })
       });
 
@@ -221,31 +221,6 @@ export default {
 .airline-content-container--edit .edit-input-container {
   margin-right: 1rem;
   margin-bottom: 0;
-}
-
-.edit-input-container {
-  display: flex;
-  flex-direction: column;
-  margin-top: .5rem;
-  margin-bottom: 1rem;
-}
-
-.edit-input-label {
-  font-size: .9rem;
-  margin-left: 1rem;
-  margin-bottom: -1.75rem;
-  z-index: 2;
-  user-select: none;
-}
-
-.edit-input {
-  background: var(--color-background);
-  border-radius: 8px;
-  border: none;
-  padding: 2.25rem 1rem 1rem;
-  color: var(--color-text);
-  outline: none;
-  font-size: 1.125rem;
 }
 
 .edit-mode-hint {

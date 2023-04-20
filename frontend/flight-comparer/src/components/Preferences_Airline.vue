@@ -1,4 +1,9 @@
 <template>
+  <AddElementWrapper
+        :type="'airline'"
+        v-if="this.showAddAirline"
+        v-on:closeOverlay="closeOverlay"
+        v-on:createdElement="createdElement"/>
   <div class="content-pane">
     <div class="preference-search-wrapper">
       <div class="preference-search-container">
@@ -14,7 +19,7 @@
                   @input="search()">
             <span class="icon search-clear-icon" @click="clearSearch" v-if="this.searchQuery !== ''">clear</span>
           </div>
-          <div class="preference-search-action" @click="">
+          <div class="preference-search-action" @click="this.showAddAirline = true">
             <span class="action-icon icon">add</span>
             <p class="action-text">Add Airline</p>
           </div>
@@ -43,16 +48,18 @@
 
 <script>
 import SearchElement_Airline from '@/components/SearchElement_Airline.vue';
+import AddElementWrapper from '@/components/AddElementWrapper.vue';
 
 export default {
   name: 'Preferences_Airline',
-  components: {SearchElement_Airline},
+  components: {AddElementWrapper, SearchElement_Airline},
   data: function () {
     return {
       searchError: false,
       searchQuery: '',
       airlines: new Map(),
-      airlineListKey: 0
+      airlineListKey: 0,
+      showAddAirline: false
     };
   },
   methods: {
@@ -100,6 +107,23 @@ export default {
     deleteAirline(airlineId) {
       this.airlines.delete(airlineId);
       this.airlineListKey++;
+    },
+
+    closeOverlay() {
+      this.showAddAirline = false;
+    },
+
+    createdElement(type, insertedData) {
+      switch (type) {
+        case 'airline':
+          insertedData.appearsInSearch = true;
+          this.airlines.set(insertedData._id, insertedData);
+          break;
+        default:
+          this.airlineListKey++;
+          break;
+      }
+      this.closeOverlay();
     }
   },
   async mounted() {

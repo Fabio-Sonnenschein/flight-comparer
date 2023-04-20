@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
 )
@@ -18,7 +19,7 @@ func GetAirlines() gin.HandlerFunc {
 		var airlines []models.Airline
 		defer cancel()
 
-		cur, err := airlineCollection.Find(ctx, bson.M{})
+		cur, err := airlineCollection.Find(ctx, bson.M{}, options.Find().SetSort(bson.D{{"name", 1}}))
 		if err != nil {
 			panic(err)
 		}
@@ -29,7 +30,7 @@ func GetAirlines() gin.HandlerFunc {
 		}
 		defer cur.Close(ctx)
 
-		c.IndentedJSON(http.StatusOK, airlines)
+		c.JSON(http.StatusOK, airlines)
 		return
 	}
 }
@@ -56,7 +57,32 @@ func GetAirlineById() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.IndentedJSON(http.StatusOK, airline)
+		c.JSON(http.StatusOK, airline)
+		return
+	}
+}
+
+func CreateAirline() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var airline models.Airline
+		defer cancel()
+
+		err := c.BindJSON(&airline)
+		if err != nil {
+			panic(err)
+		}
+
+		result, err := airlineCollection.InsertOne(ctx, bson.D{
+			{"alliance", airline.Alliance},
+			{"code", airline.Code},
+			{"name", airline.Name},
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		c.JSON(http.StatusOK, result)
 		return
 	}
 }
@@ -82,7 +108,7 @@ func UpdateAirline() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.IndentedJSON(http.StatusOK, result)
+		c.JSON(http.StatusOK, result)
 		return
 	}
 }
@@ -108,7 +134,7 @@ func DeleteAirline() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.IndentedJSON(http.StatusOK, result)
+		c.JSON(http.StatusOK, result)
 		return
 	}
 }
