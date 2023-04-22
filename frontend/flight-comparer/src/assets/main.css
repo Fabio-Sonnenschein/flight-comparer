@@ -141,9 +141,10 @@ a {
   transition: 0.15s;
   padding-bottom: 1px;
   border-bottom: 0 solid var(--color-link);
+  outline: none;
 }
 
-a:hover {
+a:hover, a:focus {
   border-width: 2px;
 }
 

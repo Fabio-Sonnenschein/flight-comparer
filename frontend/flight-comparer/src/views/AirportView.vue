@@ -38,7 +38,8 @@
             <div class="avc-section-content-container lounge-amenities-container">
               <span class="avc-section-content-container-title">Amenities</span>
               <div class="avc-section-content-container-content-list">
-                <div class="avc-section-content-container-content-list-item" v-for="amenity in lounge.amenities">
+                <div class="avc-section-content-container-content-list-item" v-for="amenity in lounge.amenities"
+                     :title="amenity.description">
                   <span class="icon">{{ amenity.icon }}</span>
                   <p class="avc-section-content-container-content">{{ amenity.text }}</p>
                 </div>
