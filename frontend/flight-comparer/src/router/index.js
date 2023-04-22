@@ -10,8 +10,8 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/about',
-      name: 'about',
+      path: '/preferences',
+      name: 'preferences',
       component: () => import('../views/SettingsView.vue')
     },
     {

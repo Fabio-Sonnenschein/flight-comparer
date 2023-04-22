@@ -46,6 +46,7 @@
 
     <div class="preferences-content-container">
       <Preferences_Airline v-if="this.settingsTabSelected === this.SETTINGS_TAB__AIRLINE"/>
+      <Preferences_Amenity v-if="this.settingsTabSelected === this.SETTINGS_TAB__AMENITY"/>
       <Preferences_About v-if="this.settingsTabSelected === this.SETTINGS_TAB__ABOUT"/>
     </div>
   </div>
@@ -55,10 +56,12 @@
 <script>
 import Preferences_About from '@/components/Preferences_About.vue';
 import Preferences_Airline from '@/components/Preferences_Airline.vue';
+import Preferences_Amenity from '@/components/Preferences_Amenity.vue';
 
 export default {
   name: 'SettingsView',
   components: {
+    Preferences_Amenity,
     Preferences_Airline,
     Preferences_About
   },

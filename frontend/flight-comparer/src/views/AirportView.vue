@@ -114,7 +114,6 @@ export default {
         console.error(request.text());
       }
       this.airportData = await request.json();
-      console.log(this.airportData);
     },
 
     async apiGETAirlineById(airlineId) {

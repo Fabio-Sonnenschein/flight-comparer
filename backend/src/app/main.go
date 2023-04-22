@@ -20,6 +20,7 @@ func main() {
 
 	routes.AirlineRouter(router)
 	routes.AirportRouter(router)
+	routes.AmenityRouter(router)
 	routes.FlightRouter(router)
 
 	err = router.Run("localhost:8080")

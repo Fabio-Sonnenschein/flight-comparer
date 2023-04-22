@@ -107,7 +107,7 @@
           <p class="action-text">Create a Trip</p>
         </div>
         <RouterLink
-              to="/about"
+              to="/preferences"
               custom
               v-slot="{ navigate }">
           <div class="action" @click="navigate" role="link">

@@ -1,49 +1,61 @@
 <template>
   <div class="search-element">
     <div class="search-element-content-container">
-      <div class="airline-content-container">
-        <div class="airline-content-container airline-content-container--display"
+      <div class="amenity-content-container">
+        <div class="amenity-content-container amenity-content-container--display"
              v-if="!this.editMode && !this.removeEntryConfirmation">
-          <h1 class="airline-code">{{ this.airlineData.code }}</h1>
-          <div class="airline-details-container">
-            <h2 class="airline-name">{{ this.airlineData.name }}</h2>
-            <p class="airline-alliance">{{ this.airlineData.alliance }}</p>
+          <div class="amenity-icon-text-container">
+            <span class="amenity-icon icon">{{ this.amenityData.icon }}</span>
+            <p class="amenity-text">{{ this.amenityData.text }}</p>
           </div>
+          <p class="amenity-description">{{ this.amenityData.description }}</p>
         </div>
-        <div class="airline-content-container airline-content-container--edit"
+        <div class="amenity-content-container amenity-content-container--edit"
              v-if="this.editMode && !this.removeEntryConfirmation">
           <div class="edit-input-container">
-            <label for="airline-code-input"
-                   class="edit-input-label">IATA Airline Code</label>
+            <label for="amenity-text-input"
+                   class="edit-input-label">Amenity</label>
             <input type="text"
                    class="input input--text edit-input"
-                   id="airline-code-input"
-                   placeholder="IATA Airline Code"
-                   v-model="airlineCode_edit">
+                   id="amenity-text-input"
+                   placeholder="Amenity"
+                   v-model="amenityEdit.text">
+          </div>
+          <div>
+            <div class="edit-icon-input-container">
+              <div class="edit-input-container">
+                <label for="amenity-icon-input"
+                       class="edit-input-label">Icon</label>
+                <input type="text"
+                       class="input input--text edit-input"
+                       id="amenity-icon-input"
+                       placeholder="Icon"
+                       v-model="amenityEdit.icon">
+              </div>
+              <div class="edit-input-container">
+                <span class="icon">{{ this.amenityEdit.icon }}</span>
+              </div>
+            </div>
+            <div class="edit-hint-container">
+              Icon names can be found on <a href="https://fonts.google.com/icons" target="_blank"
+                                            rel="noopener noreferrer">Google
+              Fonts</a>.
+            </div>
           </div>
           <div class="edit-input-container">
-            <label for="airline-name-input"
-                   class="edit-input-label">Airline Name</label>
+            <label for="amenity-description-input"
+                   class="edit-input-label">Description</label>
             <input type="text"
                    class="input input--text edit-input"
-                   id="airline-name-input"
-                   placeholder="Airline Name"
-                   v-model="airlineName_edit">
-          </div>
-          <div class="edit-input-container">
-            <label for="airline-alliance-input"
-                   class="edit-input-label">Alliance</label>
-            <input type="text"
-                   class="input input--text edit-input"
-                   id="airline-alliance-input"
-                   placeholder="Alliance"
-                   v-model="airlineAlliance_edit">
+                   id="amenity-description-input"
+                   placeholder="Description"
+                   v-model="amenityEdit.description">
           </div>
         </div>
         <div class="remove-entry-confirmation-container" v-if="this.removeEntryConfirmation">
           <div class="remove-entry-confirmation-hint">
             <span class="icon">priority_high</span>
-            <p>Deleting an airline will also remove any connected flights and trips!</p>
+            <p>Deleting an amenity will also remove any airports with lounges that offer this amenity!</p>
           </div>
           <div class="remove-entry-confirmation-actions">
             <div class="remove-entry-confirmation-action" @click="cancelRemoval">
@@ -51,7 +63,7 @@
             </div>
             <div class="remove-entry-confirmation-action remove-entry-confirmation-action--emphasis"
                  @click="deleteItem">
-              Remove airline
+              Remove amenity
             </div>
           </div>
         </div>
@@ -65,42 +77,40 @@
     </div>
     <div class="edit-mode-hint" v-if="this.editMode && !this.removeEntryConfirmation">
       <span class="icon">emoji_objects</span>
-      <p>Any changes will be reflected on existing flights and trips that are using this airline.</p>
+      <p>Any changes will be reflected on existing airport lounges.</p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'SearchElement_Airline',
+  name: 'SearchElement_Amenity',
   data: function () {
     return {
       editMode: false,
-      airlineCode_edit: '',
-      airlineName_edit: '',
-      airlineAlliance_edit: '',
+      amenityEdit: {},
       removeEntryConfirmation: false
     };
   },
   methods: {
     edit() {
       this.editMode = true;
-      this.airlineCode_edit = this.airlineData.code;
-      this.airlineName_edit = this.airlineData.name;
-      this.airlineAlliance_edit = this.airlineData.alliance;
+      this.amenityEdit.description = this.amenityData.description;
+      this.amenityEdit.icon = this.amenityData.icon;
+      this.amenityEdit.text = this.amenityData.text;
     },
 
     async save() {
-      const request = await fetch('http://127.0.0.1:8080/airline', {
+      const request = await fetch('http://127.0.0.1:8080/amenity', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          _id: this.airlineData._id,
-          alliance: this.airlineAlliance_edit,
-          code: this.airlineCode_edit,
-          name: this.airlineName_edit
+          _id: this.amenityData._id,
+          description: this.amenityEdit.description,
+          icon: this.amenityEdit.icon,
+          text: this.amenityEdit.text
         })
       });
 
@@ -109,9 +119,9 @@ export default {
       }
       const response = await request.json();
 
-      this.airlineData.code = this.airlineCode_edit;
-      this.airlineData.name = this.airlineName_edit;
-      this.airlineData.alliance = this.airlineAlliance_edit;
+      this.amenityData.description = this.amenityEdit.description;
+      this.amenityData.icon = this.amenityEdit.icon;
+      this.amenityData.text = this.amenityEdit.text;
       this.editMode = false;
     },
 
@@ -131,7 +141,7 @@ export default {
     },
 
     async deleteItem() {
-      const request = await fetch('http://127.0.0.1:8080/airline/' + this.airlineData._id, {
+      const request = await fetch('http://127.0.0.1:8080/amenity/' + this.amenityData._id, {
         method: 'DELETE'
       });
 
@@ -140,7 +150,7 @@ export default {
       }
       const response = await request.json();
 
-      this.$emit('action', this.airlineData._id);
+      this.$emit('action', this.amenityData._id);
 
       this.editMode = false;
     }
@@ -151,7 +161,7 @@ export default {
   mounted() {
   },
   props: {
-    airlineData: {},
+    amenityData: {},
     editable: Boolean
   }
 };
@@ -174,29 +184,32 @@ export default {
   justify-content: space-between;
 }
 
-.airline-content-container {
+.amenity-content-container {
   flex-grow: 4;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
-.airline-code {
-  margin: 0;
-  width: 5rem;
-  align-self: center;
-}
-
-.airline-details-container {
+.amenity-icon-text-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  width: 5rem;
+  min-height: 5rem;
 }
 
-.airline-name {
-  margin: 0;
+.amenity-icon {
+  font-size: 2rem;
+  margin: 0 0 .5rem;
 }
 
-.airline-alliance {
-  margin: 0;
+.amenity-text {
+  margin: .25rem 0 0;
+  text-align: center;
+  line-height: 1.25rem;
 }
 
 .search-element-edit-action-container {
@@ -211,15 +224,25 @@ export default {
   cursor: pointer;
 }
 
-.airline-content-container--edit {
+.amenity-content-container--edit {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.airline-content-container--edit .edit-input-container {
+.edit-icon-input-container .edit-input-container {
   margin-right: 1rem;
-  margin-bottom: 0;
+}
+
+.edit-icon-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.edit-hint-container {
+  margin: -.5rem 0 1rem 1rem;
 }
 
 .edit-mode-hint {

@@ -14,30 +14,36 @@
         </div>
       </div>
       <AddElement_Airline v-if="this.type === 'airline'" :airline="newAirline"/>
+      <AddElement_Amenity v-if="this.type === 'amenity'" :amenity="newAmenity"/>
     </div>
   </div>
 </template>
 
 <script>
 import AddElement_Airline from '@/components/AddElement_Airline.vue';
+import AddElement_Amenity from '@/components/AddElement_Amenity.vue';
 
 export default {
   name: 'AddElementWrapper',
-  components: {AddElement_Airline},
+  components: {AddElement_Amenity, AddElement_Airline},
   data: function () {
     return {
-      newAirline: {}
+      newAirline: {},
+      newAmenity: {}
     };
   },
   methods: {
     closeDialog() {
-      this.$emit('closeOverlay', 'airline');
+      this.$emit('closeOverlay');
     },
 
     save() {
       switch (this.type) {
         case 'airline':
           this.apiPOSTAirline();
+          break;
+        case 'amenity':
+          this.apiPOSTAmenity();
           break;
         default:
           this.closeDialog();
@@ -67,7 +73,32 @@ export default {
         this.newAirline._id = response.InsertedID;
       }
 
-      this.$emit('createdElement', this.type, this.newAirline);
+      this.$emit('created', this.newAirline);
+    },
+
+    async apiPOSTAmenity() {
+      const request = await fetch('http://127.0.0.1:8080/amenity', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          description: this.newAmenity.description,
+          icon: this.newAmenity.icon,
+          text: this.newAmenity.text
+        })
+      });
+
+      if (!request.ok) {
+        console.error(request.text());
+      }
+      const response = await request.json();
+
+      if (response !== null && response !== '' && response !== undefined) {
+        this.newAmenity._id = response.InsertedID;
+      }
+
+      this.$emit('created', this.newAmenity);
     }
   },
   setup(props) {

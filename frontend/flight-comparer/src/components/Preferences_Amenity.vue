@@ -1,9 +1,9 @@
 <template>
   <AddElementWrapper
-        :type="'airline'"
-        v-if="this.showAddAirline"
+        :type="'amenity'"
+        v-if="this.showAddAmenity"
         v-on:closeOverlay="closeOverlay"
-        v-on:created="createdAirline"/>
+        v-on:created="createdAmenity"/>
   <div class="content-pane">
     <div class="preference-search-wrapper">
       <div class="preference-search-container">
@@ -14,30 +14,31 @@
                   type="text"
                   class="input input--text search-input"
                   id="search-input"
-                  placeholder="Search for an airline"
+                  placeholder="Search for an amenity"
                   v-model="searchQuery"
                   @input="search()">
             <span class="icon search-clear-icon" @click="clearSearch" v-if="this.searchQuery !== ''">clear</span>
           </div>
-          <div class="preference-search-action" @click="this.showAddAirline = true">
+          <div class="preference-search-action" @click="this.showAddAmenity = true">
             <span class="action-icon icon">add</span>
-            <p class="action-text">Add Airline</p>
+            <p class="action-text">Add Amenity</p>
           </div>
         </div>
         <div class="search-error-container" v-if="this.searchError">
         </div>
         <div class="search-output"
-             :key="airlineListKey">
-          <div class="search-output--empty" v-if="this.airlines.size <= 0">
-            <span class="icon">airlines</span>
-            <p>It seems there are no airlines saved. Add an airline with the button above, next to the search.</p>
+             :key="amenityListKey">
+          <div class="search-output--empty" v-if="this.amenities.size <= 0">
+            <span class="icon">room_service</span>
+            <p>It seems there are no amenities saved. Add an amenity with the button above, next to the search.</p>
           </div>
-          <div v-for="airline in this.airlines"
-               v-if="this.airlines.size > 0">
-            <SearchElement_Airline
-                  v-if="airline[1].appearsInSearch"
-                  :airline-data="this.getAirlineData(airline)"
-                  v-on:action="deleteAirline"
+          <div v-for="amenity in this.amenities"
+               v-if="this.amenities.size > 0"
+               class="search-element--amenity">
+            <SearchElement_Amenity
+                  v-if="amenity[1].appearsInSearch"
+                  :amenity-data="this.amenities.get(amenity[0])"
+                  v-on:action="deleteAmenity"
                   :editable="true"/>
           </div>
         </div>
@@ -47,83 +48,73 @@
 </template>
 
 <script>
-import SearchElement_Airline from '@/components/SearchElement_Airline.vue';
 import AddElementWrapper from '@/components/AddElementWrapper.vue';
+import SearchElement_Amenity from '@/components/SearchElement_Amenity.vue';
 
 export default {
-  name: 'Preferences_Airline',
-  components: {AddElementWrapper, SearchElement_Airline},
+  name: 'Preferences_Amenity',
+  components: {SearchElement_Amenity, AddElementWrapper},
   data: function () {
     return {
       searchError: false,
       searchQuery: '',
-      airlines: new Map(),
-      airlineListKey: 0,
-      showAddAirline: false
+      amenities: new Map(),
+      amenityListKey: 0,
+      showAddAmenity: false
     };
   },
   methods: {
     search() {
-      for (let airline of this.airlines) {
-        airline[1].appearsInSearch = true;
+      for (let amenity of this.amenities) {
+        amenity[1].appearsInSearch = true;
       }
       let query = this.searchQuery.replace(/\s/g, '')
         .toLowerCase();
-      for (let airline of this.airlines) {
-        if (!airline[1].code.replace(/\s/g, '')
-              .toLowerCase()
-              .includes(query) &&
-            !airline[1].name.replace(/\s/g, '')
-              .toLowerCase()
-              .includes(query) &&
-            !airline[1].alliance.replace(/\s/g, '')
-              .toLowerCase()
-              .includes(query)) {
-          airline[1].appearsInSearch = false;
+      for (let amenity of this.amenities) {
+        if (!amenity[1].text.replace(/\s/g, '')
+          .toLowerCase()
+          .includes(query)) {
+          amenity[1].appearsInSearch = false;
         }
       }
     },
 
     clearSearch() {
       this.searchQuery = '';
-      for (let airline of this.airlines) {
-        airline[1].appearsInSearch = true;
+      for (let amenity of this.amenities) {
+        amenity[1].appearsInSearch = true;
       }
     },
 
-    async apiGETAirlines() {
-      const request = await fetch('http://127.0.0.1:8080/airline/all');
+    async apiGETAmenities() {
+      const request = await fetch('http://127.0.0.1:8080/amenity/all');
       if (!request.ok) {
         console.error(request.text());
       }
-      const airlineList = await request.json();
-      for (let airline of airlineList) {
-        airline.appearsInSearch = true;
-        this.airlines.set(airline._id, airline);
+      const amenityList = await request.json();
+      for (let amenity of amenityList) {
+        amenity.appearsInSearch = true;
+        this.amenities.set(amenity._id, amenity);
       }
     },
 
-    getAirlineData(airline) {
-      return airline[1];
-    },
-
-    deleteAirline(airlineId) {
-      this.airlines.delete(airlineId);
-      this.airlineListKey++;
+    deleteAmenity(amenityId) {
+      this.amenities.delete(amenityId);
+      this.amenityListKey++;
     },
 
     closeOverlay() {
-      this.showAddAirline = false;
+      this.showAddAmenity = false;
     },
 
-    createdAirline(insertedData) {
+    createdAmenity(insertedData) {
       insertedData.appearsInSearch = true;
-      this.airlines.set(insertedData._id, insertedData);
+      this.amenities.set(insertedData._id, insertedData);
       this.closeOverlay();
     }
   },
   async mounted() {
-    await this.apiGETAirlines();
+    await this.apiGETAmenities();
   }
 };
 </script>

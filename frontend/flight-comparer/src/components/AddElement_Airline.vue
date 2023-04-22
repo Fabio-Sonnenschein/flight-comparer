@@ -60,6 +60,7 @@ export default {
 
 .add-element--airline-container .edit-input-container {
   margin-right: 1rem;
+  margin-bottom: 0;
 }
 
 </style>
