@@ -109,8 +109,25 @@ export default {
                   label: 'Flight'
                 }],
                 id: 'chiplist',
-                initialSelection: ['flight'],
+                initialSelection: ['airline'],
                 label: 'Add Chip'
+              }"
+              @changeAction="this.datalistSelection"/>
+    <Chiplist class="chiplist--multiline-element"
+              :options="{
+                data: [{
+                  icon: 'airlines',
+                  id: 'airline',
+                  label: 'Airline'
+                }, {
+                  icon: 'flight',
+                  id: 'flight',
+                  label: 'Flight'
+                }],
+                id: 'chiplist',
+                initialSelection: ['flight'],
+                label: 'Add Chip',
+                multiline: true
               }"
               @changeAction="this.datalistSelection"/>
   </div>
@@ -131,8 +148,8 @@ export default {
   grid-template-areas:
           "button--icon button--extend button--text"
           "input--search input--text x"
-          "datalist select chiplist"
-          "z z z";
+          "datalist select y"
+          "chiplist chiplist--multiline z";
   row-gap: 2rem;
   column-gap: 2rem;
   align-items: center;
@@ -170,6 +187,10 @@ export default {
 
 .chiplist-element {
   grid-area: chiplist;
+}
+
+.chiplist--multiline-element {
+  grid-area: chiplist--multiline;
 }
 
 </style>

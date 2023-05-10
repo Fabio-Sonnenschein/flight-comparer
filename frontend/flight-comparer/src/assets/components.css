@@ -230,6 +230,7 @@
   justify-content: flex-start;
   border-radius: .5rem;
   overflow: hidden;
+  min-height: 2.625rem;
 }
 
 .chip-container .icon {
@@ -286,6 +287,18 @@
   margin-right: .5rem;
 }
 
+.chiplist-container--multiline {
+  display: flex;
+  flex-direction: row;
+  overflow: visible;
+  margin-right: .5rem;
+  flex-wrap: wrap;
+}
+
+.chiplist-container--multiline .chip-container, .chiplist-container--multiline .chip-add-button {
+  margin-bottom: .5rem;
+}
+
 .chip-add-button {
   background: var(--color-background);
   border-radius: .5rem;
@@ -294,6 +307,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  min-height: 2.625rem;
 }
 
 .chip-add-button > .icon {

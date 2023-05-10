@@ -50,7 +50,11 @@ export default {
       data: {type: Array},
       id: {type: String},
       initialSelection: {type: Array},
-      label: {type: String}
+      label: {type: String},
+      multiline: {
+        type: Boolean,
+        default: false
+      }
     }
   }
 };
@@ -58,19 +62,35 @@ export default {
 
 <template>
   <div class="chiplist">
-    <div class="chiplist-container">
+    <div :class="this.options.multiline ? 'chiplist-container--multiline' : 'chiplist-container'">
       <div v-for="chip in this.data">
         <Chip v-if="chip[1].shown"
               :options="{
-              icon: chip[1].icon,
-              id: chip[1].id,
-              label: chip[1].label,
-              removable: true
-            }"
+                icon: chip[1].icon,
+                id: chip[1].id,
+                label: chip[1].label,
+                removable: true
+              }"
               v-on:removeChip="this.removeChip"/>
       </div>
+      <div class="chip-add-button" v-if="this.options.multiline">
+        <span class="icon" :title="this.options.label" @click="this.showAddData = !this.showAddData">add_circle</span>
+        <div class="chiplist-data-container"
+             :class="this.showAddData ? 'chiplist-data-container--active' : ''">
+          <div v-for="chip in this.data">
+            <Chip v-if="!chip[1].shown"
+                  :options="{
+                  icon: chip[1].icon,
+                  id: chip[1].id,
+                  label: chip[1].label,
+                  removable: false
+                }"
+                  @click="this.addChip(chip[1].id)"/>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="chip-add-button">
+    <div class="chip-add-button" v-if="!this.options.multiline">
       <span class="icon" :title="this.options.label" @click="this.showAddData = !this.showAddData">add_circle</span>
       <div class="chiplist-data-container"
            :class="this.showAddData ? 'chiplist-data-container--active' : ''">
