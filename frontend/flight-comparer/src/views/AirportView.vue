@@ -126,10 +126,12 @@ export default {
     },
 
     async getLoungeAirlines() {
-      if (this.airportData.hasOwnProperty('lounges') && this.airportData.lounges !== null) {
-        this.hasLounges = this.airportData.lounges.length > 0;
-      } else {
-        this.hasLounges = false;
+      if (this.airportData.hasOwnProperty('lounges') &&
+          this.airportData.lounges !== null &&
+          this.airportData.lounges.length > 0) {
+        if (this.airportData.lounges[0].name !== '') {
+          this.hasLounges = true;
+        }
       }
       if (this.hasLounges) {
         for (let lounge of this.airportData.lounges) {
@@ -329,7 +331,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 1rem;
   width: 5rem;
   min-height: 5rem;
