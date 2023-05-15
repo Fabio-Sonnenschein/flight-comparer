@@ -28,6 +28,11 @@ const router = createRouter({
       path: '/flight/:flightId',
       name: 'flight',
       component: () => import('../views/FlightView.vue')
+    },
+    {
+      path: '/inputs',
+      name: 'inputs',
+      component: () => import('../components/inputs/componentOverview.vue')
     }
   ]
 });

@@ -1,4 +1,5 @@
 @import './base.css';
+@import './components.css';
 
 .view-root {
   display: grid;
@@ -32,30 +33,6 @@
   position: relative;
 }
 
-.search-input-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background: var(--color-background-less);
-  border-radius: .5rem;
-}
-
-.search-icon {
-  margin: 1rem;
-}
-
-.search-input {
-  background: transparent;
-  border: none;
-  flex-grow: 2;
-  padding-right: 1rem;
-  height: 100%;
-  outline: none;
-  font-size: 1.3rem;
-  color: var(--color-text);
-  border-radius: .5rem;
-}
-
 .search-clear-icon {
   margin: 1rem 1rem 1rem 0;
   cursor: pointer;
@@ -85,11 +62,12 @@
   position: relative;
   background: var(--color-background-less);
   border-radius: .5rem;
-  margin-bottom: 1rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   cursor: pointer;
+  border: 2px solid var(--color-background-less);
+  margin: 0 0 1rem 0;
 }
 
 .action:last-of-type {

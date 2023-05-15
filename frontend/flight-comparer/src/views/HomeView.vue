@@ -3,17 +3,14 @@
     <div class="action-pane">
       <div class="action-container">
         <div class="search-container">
-          <div class="search-input-container">
-            <span class="icon search-icon">search</span>
-            <input
-                  type="text"
-                  class="input input--text search-input"
-                  id="search-input"
-                  placeholder="Search for an airport or flight"
-                  v-model="searchQuery"
-                  @input="search">
-            <span class="icon search-clear-icon" @click="clearSearch" v-if="this.searchQuery !== ''">clear</span>
-          </div>
+          <Input_Search class="search-input-container"
+                        :options="{
+                          id: 'mainSearch',
+                          placeholder: 'Search for an airport or flight',
+                          initialValue: ''
+                        }"
+                        @changeAction="this.search"
+                        @clearAction="this.clearSearch"/>
           <div class="search-error-container" v-if="this.searchError">
             <p v-if="this.searchErrors.TooManySpecifications">Sorry, currently there is only one search specification
               supported.<br>(Try for example "city: Brisbane")</p>
@@ -144,6 +141,7 @@ import SearchElement_Flight from '@/components/SearchElement_Flight.vue';
 import MapSelection_Airport from '@/components/MapSelection_Airport.vue';
 import MapSelection_Flight from '@/components/MapSelection_Flight.vue';
 import L from 'leaflet';
+import Input_Search from '@/components/inputs/text/Input_Search.vue';
 
 let map;
 
@@ -161,6 +159,7 @@ const redIcon = L.icon({
 
 export default {
   components: {
+    Input_Search,
     MapSelection_Flight,
     SearchElement_Flight,
     SearchElement_Airport,
@@ -207,7 +206,8 @@ export default {
     };
   },
   methods: {
-    search() {
+    search(searchInputId, searchQuery) {
+      this.searchQuery = searchQuery;
       if (this.displaySearchHint) {
         this.displaySearchHint = false;
       }
@@ -481,7 +481,7 @@ export default {
       }
     },
 
-    clearSearch() {
+    clearSearch(searchInputId) {
       this.searchQuery = '';
       for (let airport of this.airports) {
         airport[1].appearsInSearch = true;
@@ -737,6 +737,10 @@ export default {
   flex-grow: 4;
   display: flex;
   flex-direction: column;
+}
+
+.search-input-container {
+  background: var(--color-background-less);
 }
 
 .search-output {

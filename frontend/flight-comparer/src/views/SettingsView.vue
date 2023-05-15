@@ -94,10 +94,6 @@ export default {
   flex-direction: column;
 }
 
-.top-action-container .action {
-  border: none;
-}
-
 .get-back-msg-container {
   flex-grow: 4;
   display: flex;

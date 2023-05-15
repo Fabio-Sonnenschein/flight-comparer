@@ -12,33 +12,36 @@
         </div>
         <div class="airline-content-container airline-content-container--edit"
              v-if="this.editMode && !this.removeEntryConfirmation">
-          <div class="edit-input-container">
-            <label for="airline-code-input"
-                   class="edit-input-label">IATA Airline Code</label>
-            <input type="text"
-                   class="input input--text edit-input"
-                   id="airline-code-input"
-                   placeholder="IATA Airline Code"
-                   v-model="airlineCode_edit">
-          </div>
-          <div class="edit-input-container">
-            <label for="airline-name-input"
-                   class="edit-input-label">Airline Name</label>
-            <input type="text"
-                   class="input input--text edit-input"
-                   id="airline-name-input"
-                   placeholder="Airline Name"
-                   v-model="airlineName_edit">
-          </div>
-          <div class="edit-input-container">
-            <label for="airline-alliance-input"
-                   class="edit-input-label">Alliance</label>
-            <input type="text"
-                   class="input input--text edit-input"
-                   id="airline-alliance-input"
-                   placeholder="Alliance"
-                   v-model="airlineAlliance_edit">
-          </div>
+          <Input class="edit-input-container"
+                 :options="{
+                   fieldType: 'text',
+                   icon: '',
+                   id: 'iataAirlineCode---' + this.airlineData.id,
+                   initialValue: this.airlineCode_edit,
+                   label: 'IATA Airline Code',
+                   placeholder: 'IATA Airline Code'
+                 }"
+                 @changeAction="(inputId, value) => {this.airlineCode_edit = value;}"/>
+          <Input class="edit-input-container"
+                 :options="{
+                   fieldType: 'text',
+                   icon: '',
+                   id: 'airlineName---' + this.airlineData.id,
+                   initialValue: this.airlineName_edit,
+                   label: 'Airline Name',
+                   placeholder: 'Airline Name'
+                 }"
+                 @changeAction="(inputId, value) => {this.airlineName_edit = value;}"/>
+          <Input class="edit-input-container"
+                 :options="{
+                   fieldType: 'text',
+                   icon: '',
+                   id: 'airlineAlliance---' + this.airlineData.id,
+                   initialValue: this.airlineAlliance_edit,
+                   label: 'Airline Alliance',
+                   placeholder: 'Airline Alliance'
+                 }"
+                 @changeAction="(inputId, value) => {this.airlineAlliance_edit = value;}"/>
         </div>
         <div class="remove-entry-confirmation-container" v-if="this.removeEntryConfirmation">
           <div class="remove-entry-confirmation-hint">
@@ -46,21 +49,53 @@
             <p>Deleting an airline will also remove any connected flights and trips!</p>
           </div>
           <div class="remove-entry-confirmation-actions">
-            <div class="remove-entry-confirmation-action" @click="cancelRemoval">
-              Cancel
-            </div>
-            <div class="remove-entry-confirmation-action remove-entry-confirmation-action--emphasis"
-                 @click="deleteItem">
-              Remove airline
-            </div>
+            <Button_Text :options="{
+                           helper: 'Cancel removal',
+                           id: 'cancelRemoval---' + this.airlineData.id,
+                           text: 'Cancel'
+                         }"
+                         @clickAction="this.cancelRemoval"/>
+            <Button_Text :options="{
+                           emphasis: true,
+                           helper: 'Remove airline',
+                           id: 'confirmRemoval---' + this.airlineData.id,
+                           text: 'Remove Airline',
+                         }"
+                         @clickAction="this.deleteItem"/>
           </div>
         </div>
       </div>
-      <div class="search-element-edit-action-container" v-if="this.editable && !this.removeEntryConfirmation">
-        <span class="search-element-edit-action icon" @click="edit" v-if="!this.editMode">edit</span>
-        <span class="search-element-edit-action icon" @click="discard" v-if="this.editMode">clear</span>
-        <span class="search-element-edit-action icon" @click="save" v-if="this.editMode">save</span>
-        <span class="search-element-edit-action icon" @click="confirmRemoval" v-if="this.editMode">delete</span>
+      <div class="search-element-edit-action-container"
+           :class="this.editMode ? 'search-element-edit-action-container--edit-mode' : ''"
+           v-if="this.editable && !this.removeEntryConfirmation">
+        <Button_Icon :options="{
+                       id: 'editAirline---' + this.airlineData.id,
+                       icon: 'edit',
+                       helper: 'Edit Airline'
+                     }"
+                     @clickAction="this.edit"
+                     v-if="!this.editMode"/>
+        <Button_Icon :options="{
+                       id: 'discardAirline---' + this.airlineData.id,
+                       icon: 'clear',
+                       helper: 'Discard Changes'
+                     }"
+                     @clickAction="this.discard"
+                     v-if="this.editMode"/>
+        <Button_Icon :options="{
+                       id: 'saveAirline---' + this.airlineData.id,
+                       icon: 'save',
+                       helper: 'Save Changes'
+                     }"
+                     @clickAction="this.save"
+                     v-if="this.editMode"/>
+        <Button_Icon :options="{
+                       id: 'removeAirline---' + this.airlineData.id,
+                       icon: 'delete',
+                       helper: 'Remove Airline'
+                     }"
+                     @clickAction="this.confirmRemoval"
+                     v-if="this.editMode"/>
       </div>
     </div>
     <div class="edit-mode-hint" v-if="this.editMode && !this.removeEntryConfirmation">
@@ -71,8 +106,13 @@
 </template>
 
 <script>
+import Input from '@/components/inputs/text/Input.vue';
+import Button_Icon from '@/components/inputs/button/Button_Icon.vue';
+import Button_Text from '@/components/inputs/button/Button_Text.vue';
+
 export default {
   name: 'SearchElement_Airline',
+  components: {Button_Text, Button_Icon, Input},
   data: function () {
     return {
       editMode: false,
@@ -206,25 +246,27 @@ export default {
   justify-content: flex-end;
 }
 
-.search-element-edit-action {
-  padding: 1rem;
-  cursor: pointer;
+.search-element-edit-action-container--edit-mode {
+  align-items: flex-start;
+}
+
+.search-element-edit-action-container > .button-container--icon {
+  margin-left: 1rem;
+}
+
+.search-element-edit-action-container > .button-container--icon:first-of-type {
+  margin-left: 0;
 }
 
 .airline-content-container--edit {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-.airline-content-container--edit .edit-input-container {
-  margin-right: 1rem;
-  margin-bottom: 0;
+  grid-template-rows: 1fr 1fr 1fr;
 }
 
 .edit-mode-hint {
   padding: 1rem;
-  margin: 1rem -1rem -1rem -1rem;
+  margin: 0 -1rem -1rem -1rem;
   background: var(--color-background);
   border: 2px solid var(--color-background-less);
   border-radius: 8px;
@@ -268,18 +310,12 @@ export default {
   margin-top: .5rem;
 }
 
-.remove-entry-confirmation-action {
-  padding: .5rem 1rem;
-  background: var(--color-background);
-  border-radius: 8px;
+.remove-entry-confirmation-actions > .button-container {
   margin-left: 1rem;
-  text-transform: uppercase;
-  letter-spacing: .15rem;
-  cursor: pointer;
 }
 
-.remove-entry-confirmation-action--emphasis {
-  background: var(--color-error);
+.remove-entry-confirmation-actions > .button-container:first-of-type {
+  margin-left: 0;
 }
 
 </style>
