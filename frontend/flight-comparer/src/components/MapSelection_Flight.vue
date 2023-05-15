@@ -87,18 +87,26 @@
           :to="{ name: 'flight', params: {flightId: this.flightData.flightId} }"
           custom
           v-slot="{ navigate }">
-      <div class="details-action" @click="navigate" role="link">
-        <span class="action-icon icon">edit</span>
-        <p class="action-text">Edit flight</p>
-      </div>
+      <Button_Extend class="details-action"
+                     :options="{
+                       id: 'flightDetails',
+                       icon: 'edit',
+                       helper: 'Edit flight',
+                       text: 'Edit flight'
+                     }"
+                     @clickAction="navigate"
+                     role="link"/>
     </RouterLink>
   </div>
 </template>
 
 <script>
+import Button_Extend from '@/components/inputs/button/Button_Extend.vue';
+
 export default {
   name: 'MapSelection_Flight',
-  data: function() {
+  components: {Button_Extend},
+  data: function () {
     return {
       dateDifference: '',
       dateDifferenceUTC: ''
@@ -350,29 +358,11 @@ export default {
 
 .details-action {
   background: var(--color-background-less);
-  border-radius: .5rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
   margin: 0 1rem 0 0;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .details-action:last-of-type {
   margin-right: 0;
-}
-
-.details-action .action-text {
-  opacity: 0;
-  width: 0;
-  transition: .3s;
-}
-
-.details-action:hover > .action-text {
-  opacity: 1;
-  width: 13.5rem;
 }
 
 </style>

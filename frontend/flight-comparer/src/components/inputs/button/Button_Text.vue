@@ -9,6 +9,10 @@ export default {
   },
   props: {
     options: {
+      emphasis: {
+        type: Boolean,
+        default: false
+      },
       id: {type: String},
       helper: {type: String},
       text: {type: String}
@@ -18,7 +22,9 @@ export default {
 </script>
 
 <template>
-  <div class="button-container button-container--text" :title="this.options.helper"
+  <div class="button-container button-container--text"
+       :class="this.options.emphasis? 'button-container--emphasis' : ''"
+       :title="this.options.helper"
        @click="this.$emit('clickAction', this.options.id)">
     <p class="button-text button-text--text">{{ this.options.text }}</p>
   </div>

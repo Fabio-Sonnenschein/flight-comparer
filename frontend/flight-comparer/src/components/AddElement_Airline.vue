@@ -1,38 +1,44 @@
 <template>
   <div class="add-element--airline-container">
-    <div class="edit-input-container">
-      <label for="airline-code-input"
-             class="edit-input-label">IATA Airline Code</label>
-      <input type="text"
-             class="input input--text edit-input"
-             id="airline-code-input"
-             placeholder="IATA Airline Code"
-             v-model="airline.code">
-    </div>
-    <div class="edit-input-container">
-      <label for="airline-name-input"
-             class="edit-input-label">Airline Name</label>
-      <input type="text"
-             class="input input--text edit-input"
-             id="airline-name-input"
-             placeholder="Airline Name"
-             v-model="airline.name">
-    </div>
-    <div class="edit-input-container">
-      <label for="airline-alliance-input"
-             class="edit-input-label">Alliance</label>
-      <input type="text"
-             class="input input--text edit-input"
-             id="airline-alliance-input"
-             placeholder="Alliance"
-             v-model="airline.alliance">
-    </div>
+    <Input class="edit-input-container"
+           :options="{
+             fieldType: 'text',
+             icon: '',
+             id: 'addIataAirlineCode',
+             initialValue: '',
+             label: 'IATA Airline Code',
+             placeholder: 'IATA Airline Code'
+           }"
+           @changeAction="(inputId, value) => {this.airline.code = value;}"/>
+    <Input class="edit-input-container"
+           :options="{
+             fieldType: 'text',
+             icon: '',
+             id: 'addAirlineName',
+             initialValue: '',
+             label: 'Airline Name',
+             placeholder: 'Airline Name'
+           }"
+           @changeAction="(inputId, value) => {this.airline.name = value;}"/>
+    <Input class="edit-input-container"
+           :options="{
+             fieldType: 'text',
+             icon: '',
+             id: 'addAlliance',
+             initialValue: '',
+             label: 'Alliance',
+             placeholder: 'Alliance'
+           }"
+           @changeAction="(inputId, value) => {this.airline.alliance = value;}"/>
   </div>
 </template>
 
 <script>
+import Input from '@/components/inputs/text/Input.vue';
+
 export default {
   name: 'AddElement_Airline',
+  components: {Input},
   data: function () {
     return {};
   },

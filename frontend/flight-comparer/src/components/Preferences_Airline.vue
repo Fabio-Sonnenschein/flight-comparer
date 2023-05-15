@@ -8,21 +8,22 @@
     <div class="preference-search-wrapper">
       <div class="preference-search-container">
         <div class="preference-search-bar-container">
-          <div class="search-input-container">
-            <span class="icon search-icon">search</span>
-            <input
-                  type="text"
-                  class="input input--text search-input"
-                  id="search-input"
-                  placeholder="Search for an airline"
-                  v-model="searchQuery"
-                  @input="search()">
-            <span class="icon search-clear-icon" @click="clearSearch" v-if="this.searchQuery !== ''">clear</span>
-          </div>
-          <div class="preference-search-action" @click="this.showAddAirline = true">
-            <span class="action-icon icon">add</span>
-            <p class="action-text">Add Airline</p>
-          </div>
+          <Input_Search class="search-input-container"
+                        :options="{
+                          id: 'airlineSearch',
+                          placeholder: 'Search for an airline',
+                          initialValue: ''
+                        }"
+                        @changeAction="this.search"
+                        @clearAction="this.clearSearch"/>
+          <Button_Extend class="preference-search-action"
+                         :options="{
+                           id: 'addAirline',
+                           icon: 'add',
+                           helper: 'Add airline',
+                           text: 'Add Airline'
+                         }"
+                         @clickAction="this.showAddAirline = true"/>
         </div>
         <div class="search-error-container" v-if="this.searchError">
         </div>
@@ -36,7 +37,7 @@
                v-if="this.airlines.size > 0">
             <SearchElement_Airline
                   v-if="airline[1].appearsInSearch"
-                  :airline-data="this.getAirlineData(airline)"
+                  :airline-data="this.airlines.get(airline[0])"
                   v-on:action="deleteAirline"
                   :editable="true"/>
           </div>
@@ -49,10 +50,12 @@
 <script>
 import SearchElement_Airline from '@/components/SearchElement_Airline.vue';
 import AddElementWrapper from '@/components/AddElementWrapper.vue';
+import Input_Search from '@/components/inputs/text/Input_Search.vue';
+import Button_Extend from '@/components/inputs/button/Button_Extend.vue';
 
 export default {
   name: 'Preferences_Airline',
-  components: {AddElementWrapper, SearchElement_Airline},
+  components: {Button_Extend, Input_Search, AddElementWrapper, SearchElement_Airline},
   data: function () {
     return {
       searchError: false,
@@ -63,7 +66,8 @@ export default {
     };
   },
   methods: {
-    search() {
+    search(searchInputId, searchQuery) {
+      this.searchQuery = searchQuery;
       for (let airline of this.airlines) {
         airline[1].appearsInSearch = true;
       }
@@ -84,7 +88,7 @@ export default {
       }
     },
 
-    clearSearch() {
+    clearSearch(searchInputId) {
       this.searchQuery = '';
       for (let airline of this.airlines) {
         airline[1].appearsInSearch = true;
@@ -101,10 +105,6 @@ export default {
         airline.appearsInSearch = true;
         this.airlines.set(airline._id, airline);
       }
-    },
-
-    getAirlineData(airline) {
-      return airline[1];
     },
 
     deleteAirline(airlineId) {
@@ -158,33 +158,16 @@ export default {
 
 .preference-search-bar-container .search-input-container {
   flex-grow: 4;
+  background: var(--color-background-less);
 }
 
 .preference-search-action {
   background: var(--color-background-less);
-  border-radius: .5rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
   margin: 0 0 0 2rem;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .preference-search-action:last-of-type {
   margin-right: 0;
-}
-
-.preference-search-action p {
-  opacity: 0;
-  width: 0;
-  transition: .3s;
-}
-
-.preference-search-action:hover > p {
-  opacity: 1;
-  width: 10rem;
 }
 
 .search-output {

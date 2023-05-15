@@ -8,21 +8,22 @@
     <div class="preference-search-wrapper">
       <div class="preference-search-container">
         <div class="preference-search-bar-container">
-          <div class="search-input-container">
-            <span class="icon search-icon">search</span>
-            <input
-                  type="text"
-                  class="input input--text search-input"
-                  id="search-input"
-                  placeholder="Search for an amenity"
-                  v-model="searchQuery"
-                  @input="search()">
-            <span class="icon search-clear-icon" @click="clearSearch" v-if="this.searchQuery !== ''">clear</span>
-          </div>
-          <div class="preference-search-action" @click="this.showAddAmenity = true">
-            <span class="action-icon icon">add</span>
-            <p class="action-text">Add Amenity</p>
-          </div>
+          <Input_Search class="search-input-container"
+                        :options="{
+                          id: 'amenitySearch',
+                          placeholder: 'Search for an amenity',
+                          initialValue: ''
+                        }"
+                        @changeAction="this.search"
+                        @clearAction="this.clearSearch"/>
+          <Button_Extend class="preference-search-action"
+                         :options="{
+                           id: 'addAmenity',
+                           icon: 'add',
+                           helper: 'Add amenity',
+                           text: 'Add Amenity'
+                         }"
+                         @clickAction="this.showAddAmenity = true"/>
         </div>
         <div class="search-error-container" v-if="this.searchError">
         </div>
@@ -50,10 +51,12 @@
 <script>
 import AddElementWrapper from '@/components/AddElementWrapper.vue';
 import SearchElement_Amenity from '@/components/SearchElement_Amenity.vue';
+import Input_Search from '@/components/inputs/text/Input_Search.vue';
+import Button_Extend from '@/components/inputs/button/Button_Extend.vue';
 
 export default {
   name: 'Preferences_Amenity',
-  components: {SearchElement_Amenity, AddElementWrapper},
+  components: {Button_Extend, Input_Search, SearchElement_Amenity, AddElementWrapper},
   data: function () {
     return {
       searchError: false,
@@ -64,7 +67,8 @@ export default {
     };
   },
   methods: {
-    search() {
+    search(searchInputId, searchQuery) {
+      this.searchQuery = searchQuery;
       for (let amenity of this.amenities) {
         amenity[1].appearsInSearch = true;
       }
@@ -79,7 +83,7 @@ export default {
       }
     },
 
-    clearSearch() {
+    clearSearch(searchInputId) {
       this.searchQuery = '';
       for (let amenity of this.amenities) {
         amenity[1].appearsInSearch = true;
@@ -149,33 +153,16 @@ export default {
 
 .preference-search-bar-container .search-input-container {
   flex-grow: 4;
+  background: var(--color-background-less);
 }
 
 .preference-search-action {
   background: var(--color-background-less);
-  border-radius: .5rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
   margin: 0 0 0 2rem;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .preference-search-action:last-of-type {
   margin-right: 0;
-}
-
-.preference-search-action p {
-  opacity: 0;
-  width: 0;
-  transition: .3s;
-}
-
-.preference-search-action:hover > p {
-  opacity: 1;
-  width: 10rem;
 }
 
 .search-output {

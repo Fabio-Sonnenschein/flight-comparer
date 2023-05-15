@@ -1,24 +1,26 @@
 <template>
   <div class="add-element--amenity-container">
-    <div class="edit-input-container">
-      <label for="amenity-text-input"
-             class="edit-input-label">Amenity</label>
-      <input type="text"
-             class="input input--text edit-input"
-             id="amenity-text-input"
-             placeholder="Amenity"
-             v-model="amenity.text">
-    </div>
+    <Input class="edit-input-container"
+           :options="{
+             fieldType: 'text',
+             icon: '',
+             id: 'addAmenityText',
+             initialValue: '',
+             label: 'Amenity',
+             placeholder: 'Amenity'
+           }"
+           @changeAction="(inputId, value) => {this.amenity.text = value;}"/>
     <div class="edit-icon-input-container">
-      <div class="edit-input-container">
-        <label for="amenity-icon-input"
-               class="edit-input-label">Icon</label>
-        <input type="text"
-               class="input input--text edit-input"
-               id="amenity-icon-input"
-               placeholder="Icon"
-               v-model="amenity.icon">
-      </div>
+      <Input class="edit-input-container"
+             :options="{
+               fieldType: 'text',
+               icon: '',
+               id: 'addAmenityIcon',
+               initialValue: '',
+               label: 'Icon',
+               placeholder: 'Icon'
+             }"
+             @changeAction="(inputId, value) => {this.amenity.icon = value;}"/>
       <div class="edit-input-container">
         <span class="icon">{{ this.amenity.icon }}</span>
       </div>
@@ -27,21 +29,25 @@
       Icon names can be found on <a href="https://fonts.google.com/icons" target="_blank" rel="noopener noreferrer">Google
       Fonts</a>.
     </div>
-    <div class="edit-input-container">
-      <label for="amenity-description-input"
-             class="edit-input-label">Description</label>
-      <input type="text"
-             class="input input--text edit-input"
-             id="amenity-description-input"
-             placeholder="Description"
-             v-model="amenity.description">
-    </div>
+    <Input class="edit-input-container"
+           :options="{
+             fieldType: 'text',
+             icon: '',
+             id: 'addAmenityDescription',
+             initialValue: '',
+             label: 'Description',
+             placeholder: 'Description'
+           }"
+           @changeAction="(inputId, value) => {this.amenity.description = value;}"/>
   </div>
 </template>
 
 <script>
+import Input from '@/components/inputs/text/Input.vue';
+
 export default {
   name: 'AddElement_Amenity',
+  components: {Input},
   setup(props) {
     return {props};
   },
@@ -54,7 +60,6 @@ export default {
 <style scoped>
 
 .add-element--amenity-container {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

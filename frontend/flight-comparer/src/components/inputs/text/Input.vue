@@ -70,7 +70,10 @@ export default {
         type: String,
         default: ''
       },
-      icon: {type: String},
+      icon: {
+        type: String,
+        default: ''
+      },
       id: {type: String},
       initialValue: {type: String},
       label: {type: String},

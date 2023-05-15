@@ -12,27 +12,29 @@
         </div>
         <div class="amenity-content-container amenity-content-container--edit"
              v-if="this.editMode && !this.removeEntryConfirmation">
-          <div class="edit-input-container">
-            <label for="amenity-text-input"
-                   class="edit-input-label">Amenity</label>
-            <input type="text"
-                   class="input input--text edit-input"
-                   id="amenity-text-input"
-                   placeholder="Amenity"
-                   v-model="amenityEdit.text">
-          </div>
+          <Input class="edit-input-container"
+                 :options="{
+                   fieldType: 'text',
+                   icon: '',
+                   id: 'amenityText---' + this.amenityData.id,
+                   initialValue: this.amenityEdit.text,
+                   label: 'Amenity',
+                   placeholder: 'Amenity'
+                 }"
+                 @changeAction="(inputId, value) => {this.amenityEdit.text = value;}"/>
           <div>
             <div class="edit-icon-input-container">
-              <div class="edit-input-container">
-                <label for="amenity-icon-input"
-                       class="edit-input-label">Icon</label>
-                <input type="text"
-                       class="input input--text edit-input"
-                       id="amenity-icon-input"
-                       placeholder="Icon"
-                       v-model="amenityEdit.icon">
-              </div>
-              <div class="edit-input-container">
+              <Input class="edit-input-container"
+                     :options="{
+                       fieldType: 'text',
+                       icon: '',
+                       id: 'amenityIcon---' + this.amenityData.id,
+                       initialValue: this.amenityEdit.icon,
+                       label: 'Icon',
+                       placeholder: 'Icon'
+                     }"
+                     @changeAction="(inputId, value) => {this.amenityEdit.icon = value;}"/>
+              <div class="edit-input-icon-container">
                 <span class="icon">{{ this.amenityEdit.icon }}</span>
               </div>
             </div>
@@ -42,15 +44,16 @@
               Fonts</a>.
             </div>
           </div>
-          <div class="edit-input-container">
-            <label for="amenity-description-input"
-                   class="edit-input-label">Description</label>
-            <input type="text"
-                   class="input input--text edit-input"
-                   id="amenity-description-input"
-                   placeholder="Description"
-                   v-model="amenityEdit.description">
-          </div>
+          <Input class="edit-input-container"
+                 :options="{
+                   fieldType: 'text',
+                   icon: '',
+                   id: 'amenityDescription---' + this.amenityData.id,
+                   initialValue: this.amenityEdit.description,
+                   label: 'Description',
+                   placeholder: 'Description'
+                 }"
+                 @changeAction="(inputId, value) => {this.amenityEdit.description = value;}"/>
         </div>
         <div class="remove-entry-confirmation-container" v-if="this.removeEntryConfirmation">
           <div class="remove-entry-confirmation-hint">
@@ -58,21 +61,53 @@
             <p>Deleting an amenity will also remove any airports with lounges that offer this amenity!</p>
           </div>
           <div class="remove-entry-confirmation-actions">
-            <div class="remove-entry-confirmation-action" @click="cancelRemoval">
-              Cancel
-            </div>
-            <div class="remove-entry-confirmation-action remove-entry-confirmation-action--emphasis"
-                 @click="deleteItem">
-              Remove amenity
-            </div>
+            <Button_Text :options="{
+                           helper: 'Cancel removal',
+                           id: 'cancelRemoval---' + this.amenityData.id,
+                           text: 'Cancel'
+                         }"
+                         @clickAction="this.cancelRemoval"/>
+            <Button_Text :options="{
+                           emphasis: true,
+                           helper: 'Remove amenity',
+                           id: 'confirmRemoval---' + this.amenityData.id,
+                           text: 'Remove Amenity',
+                         }"
+                         @clickAction="this.deleteItem"/>
           </div>
         </div>
       </div>
-      <div class="search-element-edit-action-container" v-if="this.editable && !this.removeEntryConfirmation">
-        <span class="search-element-edit-action icon" @click="edit" v-if="!this.editMode">edit</span>
-        <span class="search-element-edit-action icon" @click="discard" v-if="this.editMode">clear</span>
-        <span class="search-element-edit-action icon" @click="save" v-if="this.editMode">save</span>
-        <span class="search-element-edit-action icon" @click="confirmRemoval" v-if="this.editMode">delete</span>
+      <div class="search-element-edit-action-container"
+           :class="this.editMode ? 'search-element-edit-action-container--edit-mode' : ''"
+           v-if="this.editable && !this.removeEntryConfirmation">
+        <Button_Icon :options="{
+                       id: 'editAmenity---' + this.amenityData.id,
+                       icon: 'edit',
+                       helper: 'Edit Amenity'
+                     }"
+                     @clickAction="this.edit"
+                     v-if="!this.editMode"/>
+        <Button_Icon :options="{
+                       id: 'discardAmenity---' + this.amenityData.id,
+                       icon: 'clear',
+                       helper: 'Discard Changes'
+                     }"
+                     @clickAction="this.discard"
+                     v-if="this.editMode"/>
+        <Button_Icon :options="{
+                       id: 'saveAmenity---' + this.amenityData.id,
+                       icon: 'save',
+                       helper: 'Save Changes'
+                     }"
+                     @clickAction="this.save"
+                     v-if="this.editMode"/>
+        <Button_Icon :options="{
+                       id: 'removeAmenity---' + this.amenityData.id,
+                       icon: 'delete',
+                       helper: 'Remove Amenity'
+                     }"
+                     @clickAction="this.confirmRemoval"
+                     v-if="this.editMode"/>
       </div>
     </div>
     <div class="edit-mode-hint" v-if="this.editMode && !this.removeEntryConfirmation">
@@ -83,8 +118,13 @@
 </template>
 
 <script>
+import Input from '@/components/inputs/text/Input.vue';
+import Button_Text from '@/components/inputs/button/Button_Text.vue';
+import Button_Icon from '@/components/inputs/button/Button_Icon.vue';
+
 export default {
   name: 'SearchElement_Amenity',
+  components: {Button_Icon, Button_Text, Input},
   data: function () {
     return {
       editMode: false,
@@ -219,9 +259,16 @@ export default {
   justify-content: flex-end;
 }
 
-.search-element-edit-action {
-  padding: 1rem;
-  cursor: pointer;
+.search-element-edit-action-container--edit-mode {
+  align-items: flex-start;
+}
+
+.search-element-edit-action-container > .button-container--icon {
+  margin-left: 1rem;
+}
+
+.search-element-edit-action-container > .button-container--icon:first-of-type {
+  margin-left: 0;
 }
 
 .amenity-content-container--edit {
@@ -241,13 +288,18 @@ export default {
   align-items: center;
 }
 
+.edit-input-icon-container {
+  padding-bottom: 1rem;
+  margin-left: .5rem;
+}
+
 .edit-hint-container {
-  margin: -.5rem 0 1rem 1rem;
+  margin: -.5rem 0 2rem 1rem;
 }
 
 .edit-mode-hint {
   padding: 1rem;
-  margin: 1rem -1rem -1rem -1rem;
+  margin: 0 -1rem -1rem -1rem;
   background: var(--color-background);
   border: 2px solid var(--color-background-less);
   border-radius: 8px;
@@ -291,18 +343,12 @@ export default {
   margin-top: .5rem;
 }
 
-.remove-entry-confirmation-action {
-  padding: .5rem 1rem;
-  background: var(--color-background);
-  border-radius: 8px;
+.remove-entry-confirmation-actions > .button-container {
   margin-left: 1rem;
-  text-transform: uppercase;
-  letter-spacing: .15rem;
-  cursor: pointer;
 }
 
-.remove-entry-confirmation-action--emphasis {
-  background: var(--color-error);
+.remove-entry-confirmation-actions > .button-container:first-of-type {
+  margin-left: 0;
 }
 
 </style>

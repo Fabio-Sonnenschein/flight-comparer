@@ -10,6 +10,10 @@
   padding: 0;
 }
 
+.button-container--emphasis {
+  background: var(--color-error);
+}
+
 .button-container * {
   cursor: pointer;
 }
@@ -92,6 +96,7 @@
   background: var(--color-background);
   border-radius: .5rem;
   border: 2px solid var(--color-background);
+  margin: -2px;
   transition: .3s;
 }
 
@@ -212,7 +217,7 @@
 }
 
 
-/* #### SEARCH TEXT INPUT CLASSES #### */
+/* #### SELECT INPUT CLASSES #### */
 
 .input--select {
   margin: 0 1rem 0 0;
