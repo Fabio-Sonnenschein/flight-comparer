@@ -1,5 +1,5 @@
 <template>
-  <div class="add-element--amenity-container">
+  <div class="add-element--amenity-container edit-input-column">
     <Input class="edit-input-container"
            :options="{
              fieldType: 'text',

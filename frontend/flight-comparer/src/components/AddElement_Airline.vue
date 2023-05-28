@@ -1,5 +1,5 @@
 <template>
-  <div class="add-element--airline-container">
+  <div class="add-element--airline-container edit-input-column">
     <Input class="edit-input-container"
            :options="{
              fieldType: 'text',

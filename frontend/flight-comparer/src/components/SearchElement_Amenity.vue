@@ -10,7 +10,7 @@
           </div>
           <p class="amenity-description">{{ this.amenityData.description }}</p>
         </div>
-        <div class="amenity-content-container amenity-content-container--edit"
+        <div class="amenity-content-container amenity-content-container--edit edit-input-column"
              v-if="this.editMode && !this.removeEntryConfirmation">
           <Input class="edit-input-container"
                  :options="{
@@ -222,6 +222,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: relative;
 }
 
 .amenity-content-container {
@@ -261,6 +262,8 @@ export default {
 
 .search-element-edit-action-container--edit-mode {
   align-items: flex-start;
+  position: absolute;
+  right: 0;
 }
 
 .search-element-edit-action-container > .button-container--icon {

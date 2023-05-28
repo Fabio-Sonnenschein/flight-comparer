@@ -1,14 +1,14 @@
 <template>
   <div class="map-selection--background">
-    <span class="background-text--large">{{ this.airportData.airportCode }}</span>
+    <span class="background-text--large">{{ this.airportData.code }}</span>
   </div>
   <div class="map-selection--airport">
-    <h1>{{ this.airportData.airportName }}</h1>
-    <p>{{ this.airportData.airportCity }}, {{ this.airportData.airportCountry }} {{ this.getFlagEmoji() }}</p>
+    <h1>{{ this.airportData.name }}</h1>
+    <p>{{ this.airportData.location.city }}, {{ this.airportData.location.country }} {{ this.getFlagEmoji() }}</p>
   </div>
   <div class="details-action-container">
     <RouterLink
-          :to="{ name: 'airport', params: {airportId: this.airportData.airportId} }"
+          :to="{ name: 'airport', params: {airportId: this.airportData._id} }"
           custom
           v-slot="{ navigate }">
       <Button_Extend class="details-action"
@@ -32,7 +32,7 @@ export default {
   components: {Button_Extend},
   methods: {
     getFlagEmoji() {
-      let charArray = this.airportData.airportCountryA2.toUpperCase()
+      let charArray = this.airportData.location.countryA2.toUpperCase()
         .split('')
         .map((char) => 127397 + char.charCodeAt(0));
       return String.fromCodePoint(...charArray);
@@ -45,14 +45,7 @@ export default {
 
   },
   props: {
-    airportData: {
-      airportId: String,
-      airportCode: String,
-      airportName: String,
-      airportCity: String,
-      airportCountry: String,
-      airportCountryA2: String
-    }
+    airportData: {}
   }
 };
 </script>

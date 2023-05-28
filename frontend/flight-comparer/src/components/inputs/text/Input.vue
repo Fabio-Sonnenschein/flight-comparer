@@ -95,7 +95,7 @@ export default {
 </script>
 
 <template>
-  <div class="input-element">
+  <div class="input-element input-element--text">
     <div class="input-container input-container--text"
          :class="!this.valid ? 'input-container--invalid' : ''">
       <span class="icon input-icon"
@@ -107,16 +107,16 @@ export default {
           {{ this.options.label }} {{ this.options.required ? '*' : '' }}
         </label>
         <input
-              :type="this.options.fieldType"
-              :max="this.options.max"
-              :min="this.options.min"
-              :step="this.options.step"
-              :id="'input---' + this.options.id"
-              class="input"
-              :placeholder="this.options.placeholder"
-              :required="this.options.required"
-              v-model="this.value"
-              @input="this.emitChange">
+            :type="this.options.fieldType"
+            :max="this.options.max"
+            :min="this.options.min"
+            :step="this.options.step"
+            :id="'input---' + this.options.id"
+            class="input"
+            :placeholder="this.options.placeholder"
+            :required="this.options.required"
+            v-model="this.value"
+            @input="this.emitChange">
       </div>
       <span class="icon input-icon input-icon--clear"
             :class="this.value !== '' && this.options.clearable ? 'input-icon--clear-display' : ''"

@@ -2,16 +2,17 @@
   <div class="airport-view-container">
     <div class="airport-view-header">
       <RouterLink
-            to="/"
-            custom
-            v-slot="{navigate}">
+          to="/"
+          custom
+          v-slot="{navigate}">
         <span class="header-icon icon" @click="navigate" role="link">arrow_back</span>
       </RouterLink>
       <h1>{{ this.airportData.name }}</h1>
     </div>
     <div class="airport-view-content">
       <div class="airport-view-content-details">
-        <div class="avc-section-container" v-if="this.hasLounges">
+        <div class="avc-section-container"
+             v-if="this.airportData.hasOwnProperty('lounges') && this.airportData.lounges.length >= 1 && this.airportData.lounges[0].name !== ''">
           <h3 class="avc-section-title">Lounges</h3>
           <div class="avc-section avc-section__lounge" v-for="lounge in this.airportData.lounges">
             <div class="lounge-name-container">
@@ -24,7 +25,7 @@
             <div class="avc-section-content-container lounge-airlines-container">
               <span class="avc-section-content-container-title">Airlines</span>
               <p class="avc-section-content-container-content-li" v-for="airline in lounge.airlines">
-                {{ airline }}
+                {{ airline.name }}
               </p>
             </div>
             <div class="avc-section-content-container lounge-location-container">
@@ -81,6 +82,7 @@ export default {
       marker: undefined,
       knownAirlines: new Map(),
       hasLounges: false,
+      airlines: {},
       airportData: {
         _id: this.$route.params.airportId,
         code: '',
@@ -117,61 +119,26 @@ export default {
       this.airportData = await request.json();
     },
 
-    async apiGETAirlineById(airlineId) {
-      const request = await fetch('http://127.0.0.1:8080/airline/' + airlineId);
-      if (!request.ok) {
-        console.error(request.text());
-      }
-      return await request.json();
-    },
-
-    async getLoungeAirlines() {
-      if (this.airportData.hasOwnProperty('lounges') &&
-          this.airportData.lounges !== null &&
-          this.airportData.lounges.length > 0) {
-        if (this.airportData.lounges[0].name !== '') {
-          this.hasLounges = true;
-        }
-      }
-      if (this.hasLounges) {
-        for (let lounge of this.airportData.lounges) {
-          let airlines = [];
-          for (let airlineId of lounge.airlines) {
-            if (!this.knownAirlines.has(airlineId)) {
-              let airlineData = await this.apiGETAirlineById(airlineId);
-              this.knownAirlines.set(airlineId, airlineData);
-              airlines.push(airlineData.name);
-            } else {
-              airlines.push(this.knownAirlines.get(airlineId).name);
-            }
-          }
-          lounge.airlines = airlines;
-        }
-      }
-    },
-
     getFlagEmoji() {
       let charArray = this.airportData.location.countryA2.toUpperCase()
-        .split('')
-        .map((char) => 127397 + char.charCodeAt(0));
+          .split('')
+          .map((char) => 127397 + char.charCodeAt(0));
       return String.fromCodePoint(...charArray);
     }
   },
   async mounted() {
     await this.apiGETAirportById();
-    this.getLoungeAirlines()
-      .then();
 
     map = L.map('airportMap')
-      .setView([this.airportData.position.latitude, this.airportData.position.longitude], 11);
+        .setView([this.airportData.position.latitude, this.airportData.position.longitude], 11);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 15,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     })
-      .addTo(map);
+        .addTo(map);
 
     this.marker = L.marker([this.airportData.position.latitude, this.airportData.position.longitude], {icon: redIcon})
-      .addTo(map);
+        .addTo(map);
   }
 };
 </script>

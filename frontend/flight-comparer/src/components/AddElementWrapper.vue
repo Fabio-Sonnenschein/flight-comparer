@@ -13,8 +13,14 @@
           </div>
         </div>
       </div>
-      <AddElement_Airline v-if="this.type === 'airline'" :airline="newAirline"/>
-      <AddElement_Amenity v-if="this.type === 'amenity'" :amenity="newAmenity"/>
+      <AddElement_Airline v-if="this.type === 'airline'"
+                          :airline="newAirline"/>
+      <AddElement_Airport v-if="this.type === 'airport'"
+                          :airport="newAirport"/>
+      <AddElement_Amenity v-if="this.type === 'amenity'"
+                          :amenity="newAmenity"/>
+      <AddElement_Lounge v-if="this.type === 'lounge'"
+                         :lounge="newLounge"/>
     </div>
   </div>
 </template>
@@ -22,14 +28,24 @@
 <script>
 import AddElement_Airline from '@/components/AddElement_Airline.vue';
 import AddElement_Amenity from '@/components/AddElement_Amenity.vue';
+import AddElement_Airport from '@/components/AddElement_Airport.vue';
+import AddElement_Lounge from '@/components/AddElement_Lounge.vue';
 
 export default {
   name: 'AddElementWrapper',
-  components: {AddElement_Amenity, AddElement_Airline},
+  components: {AddElement_Lounge, AddElement_Airport, AddElement_Amenity, AddElement_Airline},
   data: function () {
     return {
       newAirline: {},
-      newAmenity: {}
+      newAirport: {
+        location: {},
+        position: {}
+      },
+      newAmenity: {},
+      newLounge: {
+        airlines: this.airlines,
+        amenities: this.amenities
+      }
     };
   },
   methods: {
@@ -42,8 +58,14 @@ export default {
         case 'airline':
           this.apiPOSTAirline();
           break;
+        case 'airport':
+          this.apiPOSTAirport();
+          break;
         case 'amenity':
           this.apiPOSTAmenity();
+          break;
+        case 'lounge':
+          this.$emit('created', this.newLounge);
           break;
         default:
           this.closeDialog();
@@ -57,11 +79,7 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          alliance: this.newAirline.alliance,
-          code: this.newAirline.code,
-          name: this.newAirline.name
-        })
+        body: JSON.stringify(this.newAirline)
       });
 
       if (!request.ok) {
@@ -76,17 +94,40 @@ export default {
       this.$emit('created', this.newAirline);
     },
 
+    async apiPOSTAirport() {
+      if (this.newAirport.location.countryA2 === '' || this.newAirport.location.countryA2 === undefined) {
+        this.newAirport.location.countryA2 = 'AQ';
+        // Defaults to AQ (Antarctica) to prevent unrecoverable immediate error invoked by the getFlagEmoji() functions.
+      }
+      const request = await fetch('http://127.0.0.1:8080/airport', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.newAirport)
+      });
+
+      if (!request.ok) {
+        console.error(request.text());
+      }
+      const response = await request.json();
+      console.log(response);
+
+      if (response !== null && response !== '' && response !== undefined) {
+        this.newAirport._id = response.InsertedID;
+      }
+
+      console.log(this.newAirport);
+      this.$emit('created', this.newAirport);
+    },
+
     async apiPOSTAmenity() {
       const request = await fetch('http://127.0.0.1:8080/amenity', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          description: this.newAmenity.description,
-          icon: this.newAmenity.icon,
-          text: this.newAmenity.text
-        })
+        body: JSON.stringify(this.newAmenity)
       });
 
       if (!request.ok) {
@@ -104,10 +145,16 @@ export default {
   setup(props) {
     return {props};
   },
-  mounted() {
+  async mounted() {
+    switch (this.type) {
+      default:
+        break;
+    }
   },
   props: {
-    type: ''
+    type: {type: String},
+    airlines: {type: Array},
+    amenities: {type: Array}
   }
 };
 </script>

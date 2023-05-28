@@ -7,10 +7,11 @@ import Input from '@/components/inputs/text/Input.vue';
 import Datalist from '@/components/inputs/selection/Datalist.vue';
 import Select from '@/components/inputs/selection/Select.vue';
 import Chiplist from '@/components/inputs/selection/Chiplist.vue';
+import Select_List from '@/components/inputs/selection/Select_List.vue';
 
 export default {
   name: 'componentOverview',
-  components: {Chiplist, Select, Datalist, Input, Input_Search, Button_Text, Button_Icon, Button_Extend},
+  components: {Select_List, Chiplist, Select, Datalist, Input, Input_Search, Button_Text, Button_Icon, Button_Extend},
   methods: {
     buttonPush(buttonId) {
       console.log(buttonId);
@@ -97,6 +98,22 @@ export default {
               placeholder: 'Airline'
             }"
             @changeAction="this.datalistSelection"/>
+    <Select_List class="select-list-element"
+                 :options="{
+                   data: [{
+                     _id: 'aircanada#1111',
+                     name: 'Air Canada',
+                     selected: true
+                   }, {
+                     _id: 'ana#1111',
+                     name: 'ANA'
+                   }],
+                   id: 'select-list',
+                   valueVariable: '_id',
+                   labelVariable: 'name',
+                   label: 'Airlines'
+                 }"
+                 @changeAction="this.datalistSelection"/>
     <Chiplist class="chiplist-element"
               :options="{
                 data: [{
@@ -147,8 +164,8 @@ export default {
   grid-template-columns: 25rem 25rem 25rem;
   grid-template-areas:
           "button--icon button--extend button--text"
-          "input--search input--text x"
-          "datalist select y"
+          "input--search input--text input--text"
+          "datalist select select-list"
           "chiplist chiplist--multiline z";
   row-gap: 2rem;
   column-gap: 2rem;
@@ -183,6 +200,10 @@ export default {
 
 .select-element {
   grid-area: select;
+}
+
+.select-list-element {
+  grid-area: select-list;
 }
 
 .chiplist-element {

@@ -39,6 +39,16 @@ func GetAirports() gin.HandlerFunc {
 				},
 			},
 			bson.D{
+				{"$lookup",
+					bson.D{
+						{"from", "airline"},
+						{"localField", "lounges.airlines"},
+						{"foreignField", "_id"},
+						{"as", "lounges.airlines"},
+					},
+				},
+			},
+			bson.D{
 				{"$group",
 					bson.D{
 						{"_id", "$_id"},
@@ -100,6 +110,16 @@ func GetAirportById() gin.HandlerFunc {
 				},
 			},
 			bson.D{
+				{"$lookup",
+					bson.D{
+						{"from", "airline"},
+						{"localField", "lounges.airlines"},
+						{"foreignField", "_id"},
+						{"as", "lounges.airlines"},
+					},
+				},
+			},
+			bson.D{
 				{"$group",
 					bson.D{
 						{"_id", "$_id"},
@@ -127,6 +147,111 @@ func GetAirportById() gin.HandlerFunc {
 		}
 
 		c.IndentedJSON(http.StatusOK, airport[0])
+		return
+	}
+}
+
+func CreateAirport() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var airport models.AirportDB
+		defer cancel()
+
+		err := c.BindJSON(&airport)
+		if err != nil {
+			panic(err)
+		}
+
+		result, err := airportCollection.InsertOne(ctx, bson.D{
+			{"code", airport.Code},
+			{"name", airport.Name},
+			{"location", airport.Location},
+			{"position", airport.Position},
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		c.JSON(http.StatusOK, result)
+		return
+	}
+}
+
+func UpdateAirport() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var airport models.AirportDB
+		defer cancel()
+
+		err := c.BindJSON(&airport)
+		if err != nil {
+			panic(err)
+		}
+
+		result, err := airportCollection.UpdateOne(ctx, bson.D{{"_id", airport.ID}}, bson.D{{"$set", bson.D{
+			{"_id", airport.ID},
+			{"code", airport.Code},
+			{"name", airport.Name},
+			{"location", airport.Location},
+			{"position", airport.Position},
+			{"lounges", airport.Lounges},
+		}}})
+		if err != nil {
+			panic(err)
+		}
+
+		c.JSON(http.StatusOK, result)
+		return
+	}
+}
+
+func DeleteAirport() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		idParam := c.Param("id")
+		id, err := primitive.ObjectIDFromHex(idParam)
+		if err != nil {
+			panic(err)
+		}
+
+		result, err := airportCollection.DeleteOne(ctx, bson.D{{"_id", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = flightCollection.DeleteMany(ctx, bson.D{{"departure.airport", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = flightCollection.DeleteMany(ctx, bson.D{{"arrival.airport", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = stopCollection.DeleteMany(ctx, bson.D{{"departure.airport", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = stopCollection.DeleteMany(ctx, bson.D{{"arrival.airport", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = tripCollection.DeleteMany(ctx, bson.D{{"departure.airport", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = tripCollection.DeleteMany(ctx, bson.D{{"arrival.airport", id}})
+		if err != nil {
+			panic(err)
+		}
+
+		c.JSON(http.StatusOK, result)
 		return
 	}
 }

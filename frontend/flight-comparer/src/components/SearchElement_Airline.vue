@@ -12,36 +12,38 @@
         </div>
         <div class="airline-content-container airline-content-container--edit"
              v-if="this.editMode && !this.removeEntryConfirmation">
-          <Input class="edit-input-container"
-                 :options="{
-                   fieldType: 'text',
-                   icon: '',
-                   id: 'iataAirlineCode---' + this.airlineData.id,
-                   initialValue: this.airlineCode_edit,
-                   label: 'IATA Airline Code',
-                   placeholder: 'IATA Airline Code'
-                 }"
-                 @changeAction="(inputId, value) => {this.airlineCode_edit = value;}"/>
-          <Input class="edit-input-container"
-                 :options="{
-                   fieldType: 'text',
-                   icon: '',
-                   id: 'airlineName---' + this.airlineData.id,
-                   initialValue: this.airlineName_edit,
-                   label: 'Airline Name',
-                   placeholder: 'Airline Name'
-                 }"
-                 @changeAction="(inputId, value) => {this.airlineName_edit = value;}"/>
-          <Input class="edit-input-container"
-                 :options="{
-                   fieldType: 'text',
-                   icon: '',
-                   id: 'airlineAlliance---' + this.airlineData.id,
-                   initialValue: this.airlineAlliance_edit,
-                   label: 'Airline Alliance',
-                   placeholder: 'Airline Alliance'
-                 }"
-                 @changeAction="(inputId, value) => {this.airlineAlliance_edit = value;}"/>
+          <div class="edit-input-column">
+            <Input class="edit-input-container"
+                   :options="{
+                     fieldType: 'text',
+                     icon: '',
+                     id: 'iataAirlineCode---' + this.airlineData.id,
+                     initialValue: this.airlineCode_edit,
+                     label: 'IATA Airline Code',
+                     placeholder: 'IATA Airline Code'
+                   }"
+                   @changeAction="(inputId, value) => {this.airlineCode_edit = value;}"/>
+            <Input class="edit-input-container"
+                   :options="{
+                     fieldType: 'text',
+                     icon: '',
+                     id: 'airlineName---' + this.airlineData.id,
+                     initialValue: this.airlineName_edit,
+                     label: 'Airline Name',
+                     placeholder: 'Airline Name'
+                   }"
+                   @changeAction="(inputId, value) => {this.airlineName_edit = value;}"/>
+            <Input class="edit-input-container"
+                   :options="{
+                     fieldType: 'text',
+                     icon: '',
+                     id: 'airlineAlliance---' + this.airlineData.id,
+                     initialValue: this.airlineAlliance_edit,
+                     label: 'Airline Alliance',
+                     placeholder: 'Airline Alliance'
+                   }"
+                   @changeAction="(inputId, value) => {this.airlineAlliance_edit = value;}"/>
+          </div>
         </div>
         <div class="remove-entry-confirmation-container" v-if="this.removeEntryConfirmation">
           <div class="remove-entry-confirmation-hint">
@@ -212,12 +214,17 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: relative;
 }
 
 .airline-content-container {
   flex-grow: 4;
   display: flex;
   flex-direction: row;
+}
+
+.airline-content-container--edit {
+  flex-direction: column;
 }
 
 .airline-code {
@@ -248,6 +255,8 @@ export default {
 
 .search-element-edit-action-container--edit-mode {
   align-items: flex-start;
+  position: absolute;
+  right: 0;
 }
 
 .search-element-edit-action-container > .button-container--icon {
@@ -256,12 +265,6 @@ export default {
 
 .search-element-edit-action-container > .button-container--icon:first-of-type {
   margin-left: 0;
-}
-
-.airline-content-container--edit {
-  width: 100%;
-  display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
 }
 
 .edit-mode-hint {
