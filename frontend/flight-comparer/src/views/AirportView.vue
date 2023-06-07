@@ -12,7 +12,9 @@
     <div class="airport-view-content">
       <div class="airport-view-content-details">
         <div class="avc-section-container"
-             v-if="this.airportData.hasOwnProperty('lounges') && this.airportData.lounges.length >= 1 && this.airportData.lounges[0].name !== ''">
+             v-if="this.airportData.hasOwnProperty('lounges') &&
+              this.airportData.lounges.length >= 1 &&
+              this.airportData.lounges[0].name !== ''">
           <h3 class="avc-section-title">Lounges</h3>
           <div class="avc-section avc-section__lounge" v-for="lounge in this.airportData.lounges">
             <div class="lounge-name-container">
@@ -208,7 +210,7 @@ export default {
 .avc-section-title {
   margin: 0;
   font-size: 1.8rem;
-  line-height: 2.4999rem; /* weird line-height issue on the same value as font-size */
+  line-height: 2.5rem;
   padding: 2rem;
   text-transform: uppercase;
   letter-spacing: .15rem;

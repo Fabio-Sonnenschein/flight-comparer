@@ -90,10 +90,21 @@ export default {
               @changeAction="this.datalistSelection"/>
     <Select class="select-element"
             :options="{
-              data: ['Air Canada', 'ANA', 'Iberia'],
+              data: [{
+                name: 'Air Canada',
+                id: 'ac'
+              }, {
+                name: 'ANA',
+                id: 'nh'
+              }, {
+                name: 'Iberia',
+                id: 'ib'
+              }],
               icon: 'airlines',
               id: 'select',
               initialValue: '',
+              valueVariable: 'id',
+              labelVariable: 'name',
               label: 'Airline',
               placeholder: 'Airline'
             }"
