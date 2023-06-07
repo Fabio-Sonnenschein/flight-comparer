@@ -114,7 +114,9 @@
                     }"/>
             <Input class="fvc-input"
                    :options="{
-                     fieldType: 'text',
+                     fieldType: 'number',
+                     min: 0,
+                     step: 1,
                      icon: '',
                      id: 'fvc-flight-number-input',
                      initialValue: this.flightData.number,
@@ -264,8 +266,8 @@ export default {
     };
   },
   methods: {
-    async apiGETFlightById() {
-      const request = await fetch('http://127.0.0.1:8080/flight/' + this.$route.params.flightId);
+    async apiGETFlightById(flightId) {
+      const request = await fetch('http://127.0.0.1:8080/flight/' + flightId);
       if (!request.ok) {
         console.error(request.text());
       }
@@ -328,19 +330,34 @@ export default {
     },
 
     async saveChanges() {
-      const request = await fetch('http://127.0.0.1:8080/flight', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.flightData)
-      });
+      if (this.$route.params.flightId !== 'new') {
+        const request = await fetch('http://127.0.0.1:8080/flight', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.flightData)
+        });
 
-      if (!request.ok) {
-        console.error(request.text());
+        if (!request.ok) {
+          console.error(request.text());
+        }
+        const response = await request.json();
+      } else {
+        const request = await fetch('http://127.0.0.1:8080/flight', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.flightData)
+        });
+
+        if (!request.ok) {
+          console.error(request.text());
+        }
+        const response = await request.json();
+        this.$router.replace({name: 'flight', params: {flightId: response.InsertedID}});
       }
-      const response = await request.json();
-      console.log(response);
     },
 
     async deleteFlight() {
@@ -358,12 +375,46 @@ export default {
     }
   },
   async mounted() {
-    this.flightData = await this.apiGETFlightById();
-    this.airlineData = await this.apiGETAirlineById(this.flightData.airline);
-    this.departureAirportData = await this.apiGETAirportById(this.flightData.departure.airport);
-    this.arrivalAirportData = await this.apiGETAirportById(this.flightData.arrival.airport);
     this.airports = await this.apiGETAirports();
     this.airlines = await this.apiGETAirlines();
+    if (this.$route.params.flightId !== 'new') {
+      this.flightData = await this.apiGETFlightById(this.$route.params.flightId);
+      this.airlineData = await this.apiGETAirlineById(this.flightData.airline);
+      this.departureAirportData = await this.apiGETAirportById(this.flightData.departure.airport);
+      this.arrivalAirportData = await this.apiGETAirportById(this.flightData.arrival.airport);
+    } else {
+      let dateNow = new Date;
+      this.flightData = {
+        airline: '',
+        number: 0,
+        aircraft: '',
+        cabin: '',
+        departure: {
+          airport: '',
+          time: {
+            time: dateNow.toISOString(),
+            zone: 'UTC',
+            utc: dateNow.toISOString()
+          }
+        },
+        duration: 0,
+        overnight: false,
+        arrival: {
+          airport: '',
+          time: {
+            time: dateNow.toISOString(),
+            zone: 'UTC',
+            utc: dateNow.toISOString()
+          }
+        }
+      };
+      this.airlineData = this.airlines[Math.floor(Math.random() * (this.airlines.length - 1))];
+      this.departureAirportData = this.airports[Math.floor(Math.random() * (this.airports.length - 1))];
+      this.arrivalAirportData = this.airports[Math.floor(Math.random() * (this.airports.length - 1))];
+      this.flightData.airline = this.airlineData._id;
+      this.flightData.departure.airport = this.departureAirportData._id;
+      this.flightData.arrival.airport = this.arrivalAirportData._id;
+    }
 
     this.everythingLoaded = true;
 

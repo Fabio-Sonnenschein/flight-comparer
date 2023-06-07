@@ -97,10 +97,15 @@
             </div>
           </div>
         </div>
-        <div class="action">
-          <span class="icon action-icon">airplane_ticket</span>
-          <p class="action-text">Add a Flight</p>
-        </div>
+        <RouterLink
+            :to="{ name: 'flight', params: {flightId: 'new'} }"
+            custom
+            v-slot="{ navigate }">
+          <div class="action" @click="navigate" role="link">
+            <span class="icon action-icon">airplane_ticket</span>
+            <p class="action-text">Add a Flight</p>
+          </div>
+        </RouterLink>
         <div class="action">
           <span class="icon action-icon">explore</span>
           <p class="action-text">Create a Trip</p>
