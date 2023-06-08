@@ -58,6 +58,11 @@
                       :flight-data="this.getFlightData(flight)"
                       @click="this.flightSelected(this.getFlightData(flight).flightId)"/>
                 </div>
+                <div v-for="trip in this.trips" v-if="this.trips.size > 0">
+                  <SearchElement_Trip v-if="trip[1].appearsInSearch"
+                                      :trip-data="trip[1]"
+                                      @click="this.tripSelected(trip[0])"/>
+                </div>
               </div>
               <div class="search-tab" id="search-tab-airports"
                    :class="[searchTabSelected.airport ? 'search-tab--selected' : '']">
@@ -89,9 +94,14 @@
               </div>
               <div class="search-tab" id="search-tab-trips"
                    :class="[searchTabSelected.trip ? 'search-tab--selected' : '']">
-                <div class="search-tab--empty">
+                <div class="search-tab--empty" v-if="this.trips.size <= 0">
                   <span class="icon">explore</span>
                   <p>It seems like you haven't created any trips yet. Try creating a new trip with the button below.</p>
+                </div>
+                <div v-for="trip in this.trips" v-if="this.trips.size > 0">
+                  <SearchElement_Trip v-if="trip[1].appearsInSearch"
+                                      :trip-data="trip[1]"
+                                      @click="this.tripSelected(trip[0])"/>
                 </div>
               </div>
             </div>
@@ -149,6 +159,7 @@ import MapSelection_Airport from '@/components/MapSelection_Airport.vue';
 import MapSelection_Flight from '@/components/MapSelection_Flight.vue';
 import L from 'leaflet';
 import Input_Search from '@/components/inputs/text/Input_Search.vue';
+import SearchElement_Trip from '@/components/SearchElement_Trip.vue';
 
 let map;
 
@@ -166,6 +177,7 @@ const redIcon = L.icon({
 
 export default {
   components: {
+    SearchElement_Trip,
     Input_Search,
     MapSelection_Flight,
     SearchElement_Flight,
@@ -176,9 +188,9 @@ export default {
     return {
       searchTabSelected: {
         search: false,
-        airport: true,
+        airport: false,
         flight: false,
-        trip: false
+        trip: true
       },
       SEARCH_TAB__SEARCH: 'search',
       SEARCH_TAB__AIRPORT: 'airport',
@@ -193,11 +205,13 @@ export default {
       SHOW_DETAILS__NONE: 'none',
       SHOW_DETAILS__AIRPORT: 'airport',
       SHOW_DETAILS__FLIGHT: 'flight',
+      SHOW_DETAILS__TRIP: 'trip',
       airports: new Map(),
       airportMarkers: new Map(),
       flights: new Map(),
       flightLines: new Map(),
       airlines: new Map(),
+      trips: new Map(),
       showMapDetails: 'none',
       selectedAirportMarkers: [],
       selectedFlightLines: [],
@@ -219,6 +233,9 @@ export default {
         flight[1].appearsInSearch = true;
       }
       this.displayFlights();
+      for (let trip of this.trips) {
+        trip[1].appearsInSearch = true;
+      }
       let query = this.searchQuery.replace(/\s/g, '')
           .toLowerCase();
       if (query.includes(':')) {
@@ -332,6 +349,9 @@ export default {
             for (let airport of this.airports) {
               airport[1].appearsInSearch = false;
             }
+            for (let trip of this.trips) {
+              trip[1].appearsInSearch = false;
+            }
             this.hideAirports();
             let airlineQuery = split[1];
             for (let flight of this.flights) {
@@ -352,6 +372,9 @@ export default {
             }
             for (let flight of this.flights) {
               flight[1].appearsInSearch = false;
+            }
+            for (let trip of this.trips) {
+              trip[1].appearsInSearch = false;
             }
             this.hideFlights();
             let airportQuery = split[1];
@@ -407,7 +430,48 @@ export default {
             if (!this.searchTabSelected.trip) {
               this.selectSearchTab(this.SEARCH_TAB__TRIP);
             }
-            console.log(split[1]);
+            let tripQuery = split[1];
+            for (let trip of this.trips) {
+              let airlineMatch = false;
+              for (let airline of trip[1].airlines) {
+                if (airline.code.toLowerCase()
+                        .includes(tripQuery) ||
+                    airline.name.toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(tripQuery)) {
+                  airlineMatch = true;
+                  break;
+                }
+              }
+              let flightMatch = false;
+              for (let flight of trip[1].flights) {
+                if (flight.departure.airport.code.toLowerCase()
+                        .includes(tripQuery) ||
+                    flight.departure.airport.name.toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(tripQuery) ||
+                    flight.arrival.airport.code.toLowerCase()
+                        .includes(tripQuery) ||
+                    flight.arrival.airport.name.toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(tripQuery) ||
+                    (flight.airline.code + flight.number.toString()).toLowerCase()
+                        .includes(tripQuery)) {
+                  flightMatch = true;
+                  break;
+                }
+              }
+              if (!trip[1].name.toLowerCase()
+                      .replace(/\s/g, '')
+                      .includes(tripQuery) &&
+                  !trip[1].description.toLowerCase()
+                      .replace(/\s/g, '')
+                      .includes(tripQuery) &&
+                  !airlineMatch &&
+                  !flightMatch) {
+                trip[1].appearsInSearch = false;
+              }
+            }
             break;
           default:
             if (!this.searchTabSelected.search) {
@@ -478,6 +542,47 @@ export default {
         }
         this.hideFlights();
         this.displayFlights();
+        for (let trip of this.trips) {
+          let airlineMatch = false;
+          for (let airline of trip[1].airlines) {
+            if (airline.code.toLowerCase()
+                    .includes(query) ||
+                airline.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(query)) {
+              airlineMatch = true;
+              break;
+            }
+          }
+          let flightMatch = false;
+          for (let flight of trip[1].flights) {
+            if (flight.departure.airport.code.toLowerCase()
+                    .includes(query) ||
+                flight.departure.airport.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(query) ||
+                flight.arrival.airport.code.toLowerCase()
+                    .includes(query) ||
+                flight.arrival.airport.name.toLowerCase()
+                    .replace(/\s/g, '')
+                    .includes(query) ||
+                (flight.airline.code + flight.number.toString()).toLowerCase()
+                    .includes(query)) {
+              flightMatch = true;
+              break;
+            }
+          }
+          if (!trip[1].name.toLowerCase()
+                  .replace(/\s/g, '')
+                  .includes(query) &&
+              !trip[1].description.toLowerCase()
+                  .replace(/\s/g, '')
+                  .includes(query) &&
+              !airlineMatch &&
+              !flightMatch) {
+            trip[1].appearsInSearch = false;
+          }
+        }
       }
     },
 
@@ -491,6 +596,9 @@ export default {
         flight[1].appearsInSearch = true;
       }
       this.displayFlights();
+      for (let trip of this.trips) {
+        trip[1].appearsInSearch = true;
+      }
     },
 
     determineSearchErrorState() {
@@ -570,6 +678,24 @@ export default {
         this.airports.set(airport._id, airport);
       }
       this.createAirportMarkers();
+    },
+
+    async apiGETTrips() {
+      const request = await fetch('http://127.0.0.1:8080/trip/all');
+      if (!request.ok) {
+        console.error(request.text());
+      }
+      const tripList = await request.json();
+      for (let trip of tripList) {
+        trip.appearsInSearch = true;
+        for (let airlineIndex in trip.airlines) {
+          trip.airlines[airlineIndex] = this.airlines.get(trip.airlines[airlineIndex]);
+        }
+        for (let flightIndex in trip.flights) {
+          trip.flights[flightIndex] = this.flights.get(trip.flights[flightIndex]);
+        }
+        this.trips.set(trip._id, trip);
+      }
     },
 
     createFlightLines() {
@@ -702,6 +828,14 @@ export default {
       this.selectedFlightLines = [];
     },
 
+    tripSelected(tripId) {
+      this.mapDetailsDeSelect();
+    },
+
+    tripDeSelect() {
+
+    },
+
     mapDetailsDeSelect() {
       this.airportDeSelect();
       this.flightDeSelect();
@@ -719,6 +853,7 @@ export default {
     await this.apiGETAirports();
     await this.apiGETAirlines();
     await this.apiGETFlights();
+    await this.apiGETTrips();
   },
   setup() {
   }

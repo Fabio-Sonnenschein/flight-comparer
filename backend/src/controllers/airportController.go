@@ -231,26 +231,6 @@ func DeleteAirport() gin.HandlerFunc {
 			panic(err)
 		}
 
-		_, err = stopCollection.DeleteMany(ctx, bson.D{{"departure.airport", id}})
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = stopCollection.DeleteMany(ctx, bson.D{{"arrival.airport", id}})
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = tripCollection.DeleteMany(ctx, bson.D{{"departure.airport", id}})
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = tripCollection.DeleteMany(ctx, bson.D{{"arrival.airport", id}})
-		if err != nil {
-			panic(err)
-		}
-
 		c.JSON(http.StatusOK, result)
 		return
 	}

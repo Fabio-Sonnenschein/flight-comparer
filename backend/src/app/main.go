@@ -22,6 +22,7 @@ func main() {
 	routes.AirportRouter(router)
 	routes.AmenityRouter(router)
 	routes.FlightRouter(router)
+	routes.TripRouter(router)
 
 	err = router.Run("localhost:8080")
 	if err != nil {

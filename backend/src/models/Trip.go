@@ -8,9 +8,8 @@ type Trip struct {
 	Description string               `json:"description"`
 	Vendor      string               `json:"vendor"`
 	Link        string               `json:"link"`
+	RoundTrip   bool                 `json:"roundTrip"`
 	Airlines    []primitive.ObjectID `json:"airlines"`
 	Cost        Cost                 `json:"cost"`
-	Nodes       Node                 `json:"nodes"`
-	Departure   AirportStop          `json:"departure"`
-	Arrival     AirportStop          `json:"arrival"`
+	Flights     []primitive.ObjectID `json:"flights"`
 }

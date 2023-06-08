@@ -194,73 +194,6 @@ db.createCollection('flight', {
   validationAction: 'warn'
 });
 
-db.createCollection('stop', {
-  validator: {
-    $jsonSchema: {
-      properties: {
-        arrival: {
-          bsonType: 'object',
-          properties: {
-            airport: {
-              bsonType: 'objectId'
-            },
-            time: {
-              bsonType: 'object',
-              properties: {
-                time: {
-                  bsonType: 'date'
-                },
-                zone: {
-                  bsonType: 'string'
-                },
-                utc: {
-                  bsonType: 'date'
-                }
-              }
-            }
-          }
-        },
-        duration: {
-          bsonType: 'number'
-        },
-        overnight: {
-          bsonType: 'bool'
-        },
-        connection: {
-          bsonType: 'bool'
-        },
-        switchAirport: {
-          bsonType: 'bool'
-        },
-        departure: {
-          bsonType: 'object',
-          properties: {
-            airport: {
-              bsonType: 'objectId'
-            },
-            time: {
-              bsonType: 'object',
-              properties: {
-                time: {
-                  bsonType: 'date'
-                },
-                zone: {
-                  bsonType: 'string'
-                },
-                utc: {
-                  bsonType: 'date'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  validationLevel: 'strict',
-  validationAction: 'warn'
-});
-
 db.createCollection('trip', {
   validator: {
     $jsonSchema: {
@@ -277,6 +210,9 @@ db.createCollection('trip', {
         },
         link: {
           bsonType: 'string'
+        },
+        roundTrip: {
+          bsonType: 'bool'
         },
         airlines: {
           bsonType: 'array',
@@ -295,65 +231,10 @@ db.createCollection('trip', {
             }
           }
         },
-        nodes: {
+        flights: {
           bsonType: 'array',
           items: {
-            bsonType: 'object',
-            properties: {
-              type: {
-                bsonType: 'string'
-              },
-              node: {
-                bsonType: 'objectId'
-              },
-              endpoint: {
-                bsonType: 'bool'
-              }
-            }
-          }
-        },
-        departure: {
-          bsonType: 'object',
-          properties: {
-            airport: {
-              bsonType: 'objectId'
-            },
-            time: {
-              bsonType: 'object',
-              properties: {
-                time: {
-                  bsonType: 'date'
-                },
-                zone: {
-                  bsonType: 'string'
-                },
-                utc: {
-                  bsonType: 'date'
-                }
-              }
-            }
-          }
-        },
-        arrival: {
-          bsonType: 'object',
-          properties: {
-            airport: {
-              bsonType: 'objectId'
-            },
-            time: {
-              bsonType: 'object',
-              properties: {
-                time: {
-                  bsonType: 'date'
-                },
-                zone: {
-                  bsonType: 'string'
-                },
-                utc: {
-                  bsonType: 'date'
-                }
-              }
-            }
+            bsonType: 'objectId'
           }
         }
       }
@@ -575,7 +456,7 @@ let amenities = [
     icon: 'desktop_windows',
     text: 'Work Space'
   }
-]
+];
 
 let amenityIDs = db.amenity.insertMany(amenities).insertedIds;
 printjson(amenityIDs);
@@ -1393,8 +1274,106 @@ let flights = [
         utc: new Date('2023-04-16T06:10:00Z')
       }
     }
+  },
+  {
+    airline: airlineIDs[25],
+    number: 1017,
+    aircraft: 'AIRBUS A220-300',
+    cabin: 'Economy Classic',
+    departure: {
+      airport: airportIDs[0],
+      time: {
+        time: new Date('2023-04-24T07:40:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-24T07:40:00Z')
+      }
+    },
+    duration: 1.25,
+    overnight: false,
+    arrival: {
+      airport: airportIDs[42],
+      time: {
+        time: new Date('2023-04-24T08:55:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-24T08:55:00Z')
+      }
+    }
+  },
+  {
+    airline: airlineIDs[20],
+    number: 2369,
+    aircraft: 'AIRBUS A319',
+    cabin: 'Economy Classic',
+    departure: {
+      airport: airportIDs[42],
+      time: {
+        time: new Date('2023-04-27T13:15:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-27T13:15:00Z')
+      }
+    },
+    duration: 0.8333,
+    overnight: false,
+    arrival: {
+      airport: airportIDs[2],
+      time: {
+        time: new Date('2023-04-27T14:05:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-27T14:05:00Z')
+      }
+    }
+  },
+  {
+    airline: airlineIDs[20],
+    number: 2018,
+    aircraft: 'AIRBUS A319',
+    cabin: 'Economy Classic',
+    departure: {
+      airport: airportIDs[2],
+      time: {
+        time: new Date('2023-04-27T14:55:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-27T14:55:00Z')
+      }
+    },
+    duration: 1.1666,
+    overnight: false,
+    arrival: {
+      airport: airportIDs[0],
+      time: {
+        time: new Date('2023-04-27T16:05:00-02:00'),
+        zone: 'UTC+2',
+        utc: new Date('2023-04-27T16:05:00Z')
+      }
+    }
   }
-]
+];
 
 let flightIDs = db.flight.insertMany(flights).insertedIds;
 printjson(flightIDs);
+
+let trips = [
+  {
+    name: 'Trip to switzerland',
+    description: 'A short trip to switzerland.',
+    vendor: 'Lufthansa',
+    link: 'https://example.com',
+    roundTrip: true,
+    airlines: [
+      airlineIDs[25],
+      airlineIDs[20]
+    ],
+    cost: {
+      price: 269.94,
+      currency: 'EUR'
+    },
+    flights: [
+      flightIDs[1],
+      flightIDs[2],
+      flightIDs[3]
+    ]
+  }
+];
+
+let tripIDs = db.trip.insertMany(trips).insertedIds;
+printjson(tripIDs);

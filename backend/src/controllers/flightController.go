@@ -138,7 +138,7 @@ func DeleteFlight() gin.HandlerFunc {
 			panic(err)
 		}
 
-		_, err = tripCollection.DeleteMany(ctx, bson.D{{"nodes.node", id}})
+		_, err = tripCollection.DeleteMany(ctx, bson.D{{"flights", id}})
 		if err != nil {
 			panic(err)
 		}
