@@ -15,7 +15,7 @@ const router = createRouter({
       component: () => import('../views/SettingsView.vue')
     },
     {
-      path: '/trip',
+      path: '/trip/:tripId',
       name: 'trip',
       component: () => import('../views/TripView.vue')
     },

@@ -147,6 +147,9 @@
         <MapSelection_Flight
             :flightData="this.flightData"
             v-if="showMapDetails === this.SHOW_DETAILS__FLIGHT"/>
+        <MapSelection_Trip
+            :trip-data="this.tripData"
+            v-if="showMapDetails === this.SHOW_DETAILS__TRIP"/>
       </div>
     </div>
   </div>
@@ -160,6 +163,7 @@ import MapSelection_Flight from '@/components/MapSelection_Flight.vue';
 import L from 'leaflet';
 import Input_Search from '@/components/inputs/text/Input_Search.vue';
 import SearchElement_Trip from '@/components/SearchElement_Trip.vue';
+import MapSelection_Trip from '@/components/MapSelection_Trip.vue';
 
 let map;
 
@@ -177,6 +181,7 @@ const redIcon = L.icon({
 
 export default {
   components: {
+    MapSelection_Trip,
     SearchElement_Trip,
     Input_Search,
     MapSelection_Flight,
@@ -216,7 +221,8 @@ export default {
       selectedAirportMarkers: [],
       selectedFlightLines: [],
       airportData: {},
-      flightData: {}
+      flightData: {},
+      tripData: {}
     };
   },
   methods: {
@@ -803,17 +809,29 @@ export default {
       let selectedFlightLine = this.flightLines.get(flightId);
       selectedFlightLine.setStyle({color: 'var(--color-accent-red)'});
       this.selectedFlightLines.push(selectedFlightLine);
-      let departureAirportId = this.flights.get(flightId).departure.airport._id;
+
+      let flight = this.flights.get(flightId);
+      map.fitBounds(L.latLngBounds(L.latLng(
+          flight.departure.airport.position.latitude,
+          flight.departure.airport.position.longitude
+      ), L.latLng(
+          flight.arrival.airport.position.latitude,
+          flight.arrival.airport.position.longitude
+      )));
+
+      let departureAirportId = flight.departure.airport._id;
       let selectedAirportMarker = this.airportMarkers.get(departureAirportId);
       selectedAirportMarker.setIcon(redIcon);
       this.airports.get(departureAirportId).appearsInSearch = true;
       this.selectedAirportMarkers.push(selectedAirportMarker);
-      let arrivalAirportId = this.flights.get(flightId).arrival.airport._id;
+
+      let arrivalAirportId = flight.arrival.airport._id;
       selectedAirportMarker = this.airportMarkers.get(arrivalAirportId);
       selectedAirportMarker.setIcon(redIcon);
       this.airports.get(arrivalAirportId).appearsInSearch = true;
       this.selectedAirportMarkers.push(selectedAirportMarker);
       this.displayAirports();
+
       this.showMapDetails = this.SHOW_DETAILS__FLIGHT;
       // this.flights.get(airportId) only returns the data part of the map entry,
       // however, this.getFlightData expects an entire map entry, not just the data part
@@ -830,15 +848,58 @@ export default {
 
     tripSelected(tripId) {
       this.mapDetailsDeSelect();
+      let trip = this.trips.get(tripId);
+      let boundList = [];
+
+      for (let flight of trip.flights) {
+        let flightLine = this.flightLines.get(flight._id);
+        flightLine.setStyle({color: 'var(--color-accent-red)'});
+        this.flights.get(flight._id).appearsInSearch = true;
+        this.selectedFlightLines.push(flightLine);
+        this.displayFlights();
+
+        let departureAirportMarker = this.airportMarkers.get(flight.departure.airport._id);
+        departureAirportMarker.setIcon(redIcon);
+        this.airports.get(flight.departure.airport._id).appearsInSearch = true;
+        this.selectedAirportMarkers.push(departureAirportMarker);
+        boundList.push(L.latLng(
+            flight.departure.airport.position.latitude,
+            flight.departure.airport.position.longitude
+        ));
+
+        let arrivalAirportMarker = this.airportMarkers.get(flight.arrival.airport._id);
+        arrivalAirportMarker.setIcon(redIcon);
+        this.airports.get(flight.arrival.airport._id).appearsInSearch = true;
+        this.selectedAirportMarkers.push(arrivalAirportMarker);
+        boundList.push(L.latLng(
+            flight.arrival.airport.position.latitude,
+            flight.arrival.airport.position.longitude
+        ));
+        this.displayAirports();
+      }
+
+      map.fitBounds(L.latLngBounds(boundList));
+
+      this.showMapDetails = this.SHOW_DETAILS__TRIP;
+      this.tripData = trip;
     },
 
     tripDeSelect() {
+      for (let selectedFlightLine of this.selectedFlightLines) {
+        selectedFlightLine.setStyle({color: 'var(--color-accent-blue)'});
+      }
+      this.selectedFlightLines = [];
 
+      for (let selectedAirportMarker of this.selectedAirportMarkers) {
+        selectedAirportMarker.setIcon(blueIcon);
+      }
+      this.selectedAirportMarkers = [];
     },
 
     mapDetailsDeSelect() {
       this.airportDeSelect();
       this.flightDeSelect();
+      this.tripDeSelect();
     }
   },
   async mounted() {

@@ -13,9 +13,6 @@
       <div class="trip-overview-container trip-overview-container--flights">
         <p class="trip-overview-container-title">Itinerary</p>
         <div class="trip-overview-flight" v-for="flight in this.tripData.flights">
-          <p class="trip-overview-flight--departure">{{ flight.departure.airport.code }}</p>
-          <span class="icon">trending_flat</span>
-          <p class="trip-overview-flight--arrival">{{ flight.arrival.airport.code }}</p>
           <p class="trip-overview-flight--departure-time">
             {{
               new Date(flight.departure.time.time)
@@ -29,6 +26,9 @@
                       })
             }}
           </p>
+          <p class="trip-overview-flight--departure">{{ flight.departure.airport.code }}</p>
+          <span class="icon">trending_flat</span>
+          <p class="trip-overview-flight--arrival">{{ flight.arrival.airport.code }}</p>
         </div>
       </div>
       <div class="trip-overview-container trip-overview-container--airlines">
@@ -149,7 +149,7 @@ export default {
 
 .trip-overview-flight {
   display: grid;
-  grid-template-columns: 1fr .5fr 1fr 2fr;
+  grid-template-columns: 2fr 1fr .5fr 1fr;
   column-gap: 1rem;
   margin-bottom: 1rem;
   align-items: center;
