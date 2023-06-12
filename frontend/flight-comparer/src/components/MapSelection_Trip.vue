@@ -75,7 +75,6 @@ export default {
     return {props};
   },
   mounted() {
-    console.log(this.tripData);
   },
   props: {
     tripData: {}

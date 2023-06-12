@@ -116,10 +116,15 @@
             <p class="action-text">Add a Flight</p>
           </div>
         </RouterLink>
-        <div class="action">
-          <span class="icon action-icon">explore</span>
-          <p class="action-text">Create a Trip</p>
-        </div>
+        <RouterLink
+            :to="{ name: 'trip', params: {tripId: 'new'} }"
+            custom
+            v-slot="{ navigate }">
+          <div class="action" @click="navigate" role="link">
+            <span class="icon action-icon">explore</span>
+            <p class="action-text">Create a Trip</p>
+          </div>
+        </RouterLink>
         <RouterLink
             :to="{path: '/preferences', query: {tab: 'about'}}"
             custom
@@ -878,7 +883,9 @@ export default {
         this.displayAirports();
       }
 
-      map.fitBounds(L.latLngBounds(boundList));
+      if (boundList.length > 0) {
+        map.fitBounds(L.latLngBounds(boundList));
+      }
 
       this.showMapDetails = this.SHOW_DETAILS__TRIP;
       this.tripData = trip;
